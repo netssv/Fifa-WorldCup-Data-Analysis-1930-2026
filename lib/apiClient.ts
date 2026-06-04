@@ -82,3 +82,21 @@ export const predictGroup = (
 
 export const fetchFullBracket = (): Promise<FullBracket> =>
   get<FullBracket>("/predict/bracket/full");
+
+export interface TeamPathPrediction {
+  team: string;
+  group: string;
+  elo: number;
+  form: number;
+  path: {
+    qualify_from_group: number;
+    reach_r16: number;
+    reach_quarterfinals: number;
+    reach_semifinals: number;
+    reach_final: number;
+    win_tournament: number;
+  };
+}
+
+export const fetchTeamPath = (team: string): Promise<TeamPathPrediction> =>
+  post<TeamPathPrediction>("/predict/team-path", { team });

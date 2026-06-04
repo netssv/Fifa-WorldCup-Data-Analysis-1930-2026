@@ -61,11 +61,80 @@ _home_model: Any = None
 _away_model: Any = None
 _label_encoder: Any = None
 
+_squad_values: dict[str, dict[str, float]] = {}
+_eafc_ratings: dict[str, dict[str, float]] = {}
+_xg_features: dict[str, dict[str, float]] = {}
+_odds_features: dict[str, dict[str, float]] = {}
+
+def _load_extra_features() -> None:
+    global _squad_values, _eafc_ratings, _xg_features
+    squad_path = BASE_DIR / "data" / "processed" / "squad_values_2026.csv"
+    eafc_path = BASE_DIR / "data" / "processed" / "eafc_ratings_2026.csv"
+    xg_path = BASE_DIR / "data" / "processed" / "xg_features_2026.csv"
+
+    if squad_path.exists():
+        try:
+            df = pd.read_csv(squad_path)
+            for _, row in df.iterrows():
+                _squad_values[row["team_name"]] = {
+                    "total": float(row["squad_total_eur"]),
+                    "avg": float(row["squad_avg_eur"]),
+                    "top11": float(row["top11_eur"]),
+                }
+        except Exception as exc:
+            print(f"[WARN] Could not load squad values: {exc}")
+
+    if eafc_path.exists():
+        try:
+            df = pd.read_csv(eafc_path)
+            for _, row in df.iterrows():
+                _eafc_ratings[row["team_name"]] = {
+                    "overall": float(row["avg_overall"]),
+                    "pace": float(row["avg_pace"]),
+                    "defending": float(row["avg_defending"]),
+                    "physic": float(row["avg_physic"]),
+                    "top5": float(row["top5_avg"]),
+                }
+        except Exception as exc:
+            print(f"[WARN] Could not load EA FC ratings: {exc}")
+
+    if xg_path.exists():
+        try:
+            df = pd.read_csv(xg_path)
+            for _, row in df.iterrows():
+                _xg_features[row["team_name"]] = {
+                    "xg_for_avg": float(row["xg_for_avg"]),
+                    "xg_against_avg": float(row["xg_against_avg"]),
+                    "xg_diff_avg": float(row["xg_diff_avg"]),
+                    "xg_overperform_avg": float(row["xg_overperform_avg"]),
+                    "xg_efficiency_avg": float(row["xg_efficiency_avg"]),
+                    "xg_consistency": float(row["xg_consistency"]),
+                }
+        except Exception as exc:
+            print(f"[WARN] Could not load xG features: {exc}")
+
+    odds_path = BASE_DIR / "data" / "processed" / "odds_features_2026.csv"
+    if odds_path.exists():
+        try:
+            df = pd.read_csv(odds_path)
+            for _, row in df.iterrows():
+                _odds_features[row["team_name"]] = {
+                    "implied_home_win": float(row["implied_home_win_avg"]),
+                    "implied_away_win": float(row["implied_away_win_avg"]),
+                    "implied_draw": float(row["implied_draw_avg"]),
+                    "market_confidence": float(row["market_confidence_avg"]),
+                    "odds_margin": float(row["odds_margin_avg"]),
+                }
+        except Exception as exc:
+            print(f"[WARN] Could not load odds features: {exc}")
+
 def _load_models() -> bool:
     """Load RF models from disk. Returns True if successful."""
     global _home_model, _away_model, _label_encoder
     home_path = MODELS_DIR / "home_goal_model.pkl"
     away_path = MODELS_DIR / "away_goal_model.pkl"
+
+    _load_extra_features()
 
     if not (home_path.exists() and away_path.exists()):
         return False
@@ -124,27 +193,170 @@ def _encode_team(team: str) -> int:
         return 0
 
 
-def predict_with_model(team_a: str, team_b: str) -> tuple[float, float]:
+def predict_with_model(team_a: str, team_b: str, stage: str = "r32") -> tuple[float, float]:
     """
-    Use the RF regressors to predict goals. Returns (goals_a, goals_b).
-    Falls back to ELO if models are not loaded.
+    Blends the RF model predictions with ELO and Form statistics
+    for a more robust, realistic prediction (ensemble method).
     """
+    elo_goals_a, elo_goals_b = predict_fallback_goals(team_a, team_b)
+
     if not _models_loaded or _home_model is None:
-        return predict_fallback_goals(team_a, team_b)
+        return elo_goals_a, elo_goals_b
 
     try:
-        enc_a = _encode_team(team_a)
-        enc_b = _encode_team(team_b)
-        X = pd.DataFrame(
-            [[enc_a, enc_b, 2026]],
-            columns=["HomeTeamEncoded", "AwayTeamEncoded", "Year"],
-        )
-        goals_a = float(_home_model.predict(X)[0])
-        goals_b = float(_away_model.predict(X)[0])
-        return max(0.0, goals_a), max(0.0, goals_b)
+        # Load constants for altitude checks
+        from src.constants import VENUE_ALTITUDE_2026, HIGH_ALTITUDE_THRESHOLD_M, HIGH_ALTITUDE_TEAMS
+        from src.constants_v3 import TEAM_PEDIGREE, SQUAD_EXPERIENCE, CLIMATE_TRAVEL, LEAGUE_SYNERGY, OFF_DEF_METRICS
+
+        elo_a = _get_elo(team_a)
+        elo_b = _get_elo(team_b)
+        elo_diff = elo_a - elo_b
+        goal_diff_avg = (elo_diff / 400.0) * 1.2
+
+        home_form = _get_form(team_a)
+        away_form = _get_form(team_b)
+        h2h_wins = _get_h2h(team_a, team_b)
+        is_knockout = 1.0 if stage != "group" else 0.0
+
+        # Squad values
+        sq_a = _squad_values.get(team_a, {"total": 50_000_000.0, "avg": 2_000_000.0, "top11": 30_000_000.0})
+        sq_b = _squad_values.get(team_b, {"total": 50_000_000.0, "avg": 2_000_000.0, "top11": 30_000_000.0})
+
+        squad_value_ratio = sq_a["total"] / max(1.0, sq_b["total"])
+        value_log_home = math.log10(max(1.0, sq_a["total"]))
+        value_log_away = math.log10(max(1.0, sq_b["total"]))
+
+        # EA FC Ratings
+        fc_a = _eafc_ratings.get(team_a, {"overall": 70.0, "pace": 70.0, "defending": 70.0, "physic": 70.0, "top5": 70.0})
+        fc_b = _eafc_ratings.get(team_b, {"overall": 70.0, "pace": 70.0, "defending": 70.0, "physic": 70.0, "top5": 70.0})
+
+        eafc_overall_diff = fc_a["overall"] - fc_b["overall"]
+        eafc_physic_diff = fc_a["physic"] - fc_b["physic"]
+        eafc_top5_avg_home = fc_a["top5"]
+
+        # Default venue altitude mapping
+        venue_city = "neutral"
+        if team_a == "Mexico":
+            venue_city = "Mexico City"
+        elif team_a == "Canada":
+            venue_city = "Toronto"
+        elif team_a == "United States":
+            venue_city = "Dallas"
+
+        venue_altitude_m = VENUE_ALTITUDE_2026.get(venue_city, 0.0)
+        is_high_altitude = 1.0 if venue_altitude_m > HIGH_ALTITUDE_THRESHOLD_M else 0.0
+        altitude_penalty = -0.1 if (is_high_altitude and team_a not in HIGH_ALTITUDE_TEAMS) else 0.0
+
+        # Advanced V3 features
+        pedigree_a = TEAM_PEDIGREE.get(team_a, (0, 0, 1))
+        pedigree_b = TEAM_PEDIGREE.get(team_b, (0, 0, 1))
+        titles_diff = pedigree_a[0] - pedigree_b[0]
+        semis_diff = pedigree_a[1] - pedigree_b[1]
+        appearances_diff = pedigree_a[2] - pedigree_b[2]
+
+        exp_a = SQUAD_EXPERIENCE.get(team_a, (26.5, 25.0))
+        exp_b = SQUAD_EXPERIENCE.get(team_b, (26.5, 25.0))
+        avg_age_diff = exp_a[0] - exp_b[0]
+        avg_caps_diff = exp_a[1] - exp_b[1]
+
+        clim_a = CLIMATE_TRAVEL.get(team_a, (8000.0, 0.65))
+        clim_b = CLIMATE_TRAVEL.get(team_b, (8000.0, 0.65))
+        travel_dist_diff = clim_a[0] - clim_b[0]
+        climate_compat_diff = clim_a[1] - clim_b[1]
+
+        syn_a = LEAGUE_SYNERGY.get(team_a, (0.10, 0.40))
+        syn_b = LEAGUE_SYNERGY.get(team_b, (0.10, 0.40))
+        synergy_diff = syn_a[0] - syn_b[0]
+        top5_ratio_diff = syn_a[1] - syn_b[1]
+
+        off_def_a = OFF_DEF_METRICS.get(team_a, (1.4, 0.40))
+        off_def_b = OFF_DEF_METRICS.get(team_b, (1.4, 0.40))
+        goals_scored_diff = off_def_a[0] - off_def_b[0]
+        clean_sheets_diff = off_def_a[1] - off_def_b[1]
+
+        # xG features — default to league-average values when data is absent
+        _XG_DEFAULTS = {
+            "xg_for_avg": 1.35,
+            "xg_against_avg": 1.35,
+            "xg_diff_avg": 0.0,
+            "xg_overperform_avg": 0.0,
+            "xg_efficiency_avg": 1.0,
+            "xg_consistency": 0.5,
+        }
+        xg_a = _xg_features.get(team_a, _XG_DEFAULTS)
+        xg_b = _xg_features.get(team_b, _XG_DEFAULTS)
+
+        # Market odds features — default to equal probs (no market signal)
+        _ODDS_DEFAULTS = {
+            "implied_home_win": 0.333,
+            "implied_away_win": 0.333,
+            "implied_draw": 0.334,
+            "market_confidence": 0.5,
+            "odds_margin": 0.05,
+        }
+        odds_a = _odds_features.get(team_a, _ODDS_DEFAULTS)
+        odds_b = _odds_features.get(team_b, _ODDS_DEFAULTS)
+
+        # Construct feature vector matching exact 43-column training schema
+        X = pd.DataFrame([{
+            "elo_diff": elo_diff,
+            "goal_diff_avg": goal_diff_avg,
+            "home_form": home_form,
+            "away_form": away_form,
+            "h2h_wins": h2h_wins,
+            "is_knockout": is_knockout,
+            "squad_value_ratio": squad_value_ratio,
+            "value_log_home": value_log_home,
+            "value_log_away": value_log_away,
+            "eafc_overall_diff": eafc_overall_diff,
+            "eafc_physic_diff": eafc_physic_diff,
+            "eafc_top5_avg_home": eafc_top5_avg_home,
+            "venue_altitude_m": venue_altitude_m,
+            "is_high_altitude": is_high_altitude,
+            "altitude_penalty": altitude_penalty,
+            "titles_diff": titles_diff,
+            "semis_diff": semis_diff,
+            "appearances_diff": appearances_diff,
+            "avg_age_diff": avg_age_diff,
+            "avg_caps_diff": avg_caps_diff,
+            "travel_dist_diff": travel_dist_diff,
+            "climate_compat_diff": climate_compat_diff,
+            "synergy_diff": synergy_diff,
+            "top5_ratio_diff": top5_ratio_diff,
+            "goals_scored_diff": goals_scored_diff,
+            "clean_sheets_diff": clean_sheets_diff,
+            # xG columns — home team (team_a) / away team (team_b)
+            "xg_for_avg_home": xg_a.get("xg_for_avg", 1.35),
+            "xg_for_avg_away": xg_b.get("xg_for_avg", 1.35),
+            "xg_against_avg_home": xg_a.get("xg_against_avg", 1.35),
+            "xg_against_avg_away": xg_b.get("xg_against_avg", 1.35),
+            "xg_diff_avg_home": xg_a.get("xg_diff_avg", 0.0),
+            "xg_diff_avg_away": xg_b.get("xg_diff_avg", 0.0),
+            "xg_overperform_avg_home": xg_a.get("xg_overperform_avg", 0.0),
+            "xg_overperform_avg_away": xg_b.get("xg_overperform_avg", 0.0),
+            "xg_efficiency_avg_home": xg_a.get("xg_efficiency_avg", 1.0),
+            "xg_efficiency_avg_away": xg_b.get("xg_efficiency_avg", 1.0),
+            "xg_consistency_home": xg_a.get("xg_consistency", 0.5),
+            "xg_consistency_away": xg_b.get("xg_consistency", 0.5),
+            # Market odds — team_a as home, team_b as away
+            "odds_implied_home_win": odds_a.get("implied_home_win", 0.333),
+            "odds_implied_away_win": odds_b.get("implied_away_win", 0.333),
+            "odds_implied_draw": odds_a.get("implied_draw", 0.334),
+            "odds_market_confidence": (odds_a.get("market_confidence", 0.5) + odds_b.get("market_confidence", 0.5)) / 2,
+            "odds_margin": (odds_a.get("odds_margin", 0.05) + odds_b.get("odds_margin", 0.05)) / 2,
+        }])
+
+        rf_goals_a = float(_home_model.predict(X)[0])
+        rf_goals_b = float(_away_model.predict(X)[0])
+        
+        # 35% Random Forest (historical goal trends), 65% ELO & Form (current strength)
+        goals_a = 0.35 * rf_goals_a + 0.65 * elo_goals_a
+        goals_b = 0.35 * rf_goals_b + 0.65 * elo_goals_b
+        return max(0.1, goals_a), max(0.1, goals_b)
     except Exception as exc:
         print(f"[WARN] Model prediction failed: {exc}")
-        return predict_fallback_goals(team_a, team_b)
+        return elo_goals_a, elo_goals_b
+
 
 
 def predict_fallback_goals(team_a: str, team_b: str) -> tuple[float, float]:
@@ -295,6 +507,94 @@ async def predict_group(req: GroupRequest):
             for idx, (team, prob) in enumerate(ranked)
         ],
         "suggested_qualifiers": [ranked[0][0], ranked[1][0]],
+    }
+
+
+class TeamPathRequest(BaseModel):
+    team: str
+
+
+@app.post("/predict/team-path")
+async def predict_team_path(req: TeamPathRequest):
+    """Calculate round-by-round advancement probability for a team."""
+    team = req.team.strip()
+
+    # Find which group this team belongs to
+    team_group = None
+    group_teams: list[str] = []
+    for group_name, teams in GROUPS_2026.items():
+        if team in teams:
+            team_group = group_name
+            group_teams = teams
+            break
+
+    if team_group is None:
+        raise HTTPException(status_code=400, detail=f"Team '{team}' not found in any group")
+
+    # Group stage: qualify probability
+    qualify_scores: dict[str, float] = {t: 0.0 for t in group_teams}
+    for i, ta in enumerate(group_teams):
+        for tb in group_teams[i + 1:]:
+            goals_a, goals_b = predict_with_model(ta, tb)
+            p_a, p_draw, p_b = goals_to_probs(goals_a, goals_b, "group")
+            qualify_scores[ta] += p_a + p_draw * 0.5
+            qualify_scores[tb] += p_b + p_draw * 0.5
+
+    max_s = max(qualify_scores.values()) or 1.0
+    group_qualify_prob = min(0.99, qualify_scores[team] / max_s)
+
+    # Knockout stages: average win probability vs likely opponents at each stage
+    # Use ELO to estimate strength of average opponent at each tier
+    all_elos = sorted(FIFA_ELO_2026.values(), reverse=True)
+    team_elo = _get_elo(team)
+    team_form = _get_form(team)
+
+    def _avg_win_prob_at_stage(opponent_elo_tier: float, stage: str) -> float:
+        """Estimate win prob vs an opponent of given ELO at a stage."""
+        diff = team_elo - opponent_elo_tier
+        base_goals = 1.2
+        scale = diff / 400.0
+        goals_team = base_goals + scale * 0.6 + team_form * 0.4
+        goals_opp = base_goals - scale * 0.6 + 0.55 * 0.4  # avg form ~0.55
+        goals_team = max(0.1, goals_team)
+        goals_opp = max(0.1, goals_opp)
+        p_win, _, p_lose = goals_to_probs(goals_team, goals_opp, stage)
+        return p_win / (p_win + p_lose) if (p_win + p_lose) > 0 else 0.5
+
+    # Median ELO of teams in each tier bracket
+    median_r32_elo = all_elos[len(all_elos) // 2]  # middle tier
+    median_r16_elo = all_elos[len(all_elos) // 3]   # upper-middle tier
+    median_qf_elo = all_elos[len(all_elos) // 4]    # top quarter
+    median_sf_elo = all_elos[4]                       # top 5
+    median_final_elo = all_elos[2]                    # top 3
+
+    win_r32 = _avg_win_prob_at_stage(median_r32_elo, "r32")
+    win_r16 = _avg_win_prob_at_stage(median_r16_elo, "r16")
+    win_qf = _avg_win_prob_at_stage(median_qf_elo, "r8")
+    win_sf = _avg_win_prob_at_stage(median_sf_elo, "semi")
+    win_final = _avg_win_prob_at_stage(median_final_elo, "final")
+
+    # Cumulative probabilities (each round requires passing all previous)
+    prob_reach_r32 = group_qualify_prob
+    prob_reach_r16 = prob_reach_r32 * win_r32
+    prob_reach_qf = prob_reach_r16 * win_r16
+    prob_reach_sf = prob_reach_qf * win_qf
+    prob_reach_final = prob_reach_sf * win_sf
+    prob_champion = prob_reach_final * win_final
+
+    return {
+        "team": team,
+        "group": team_group,
+        "elo": team_elo,
+        "form": round(team_form, 2),
+        "path": {
+            "qualify_from_group": round(group_qualify_prob, 4),
+            "reach_r16": round(prob_reach_r16, 4),
+            "reach_quarterfinals": round(prob_reach_qf, 4),
+            "reach_semifinals": round(prob_reach_sf, 4),
+            "reach_final": round(prob_reach_final, 4),
+            "win_tournament": round(prob_champion, 4),
+        },
     }
 
 

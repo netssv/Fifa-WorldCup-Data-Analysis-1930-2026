@@ -1,0 +1,357 @@
+{
+  "_metadata": {
+    "source": "Hardcoded — update manually before each tournament",
+    "last_updated": "2026-06-01",
+    "fields": {
+      "coach": "Full name of head coach",
+      "wc_editions": "Number of FIFA World Cups coached (as head coach)",
+      "intl_win_rate": "Win rate in full international matches (0.0–1.0)",
+      "knockout_experience": "Has coached at least one World Cup knockout match",
+      "tournament_wins": "Number of major international trophies won as head coach (WC, continental)"
+    }
+  },
+
+  "Argentina": {
+    "coach": "Lionel Scaloni",
+    "wc_editions": 1,
+    "intl_win_rate": 0.71,
+    "knockout_experience": true,
+    "tournament_wins": 2
+  },
+  "France": {
+    "coach": "Didier Deschamps",
+    "wc_editions": 3,
+    "intl_win_rate": 0.68,
+    "knockout_experience": true,
+    "tournament_wins": 2
+  },
+  "Spain": {
+    "coach": "Luis de la Fuente",
+    "wc_editions": 0,
+    "intl_win_rate": 0.67,
+    "knockout_experience": false,
+    "tournament_wins": 1
+  },
+  "Brazil": {
+    "coach": "Dorival Júnior",
+    "wc_editions": 0,
+    "intl_win_rate": 0.60,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Portugal": {
+    "coach": "Roberto Martínez",
+    "wc_editions": 0,
+    "intl_win_rate": 0.65,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "England": {
+    "coach": "Thomas Tuchel",
+    "wc_editions": 0,
+    "intl_win_rate": 0.62,
+    "knockout_experience": false,
+    "tournament_wins": 1
+  },
+  "Germany": {
+    "coach": "Julian Nagelsmann",
+    "wc_editions": 0,
+    "intl_win_rate": 0.58,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Netherlands": {
+    "coach": "Ronald Koeman",
+    "wc_editions": 0,
+    "intl_win_rate": 0.60,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Belgium": {
+    "coach": "Rudi García",
+    "wc_editions": 0,
+    "intl_win_rate": 0.52,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Croatia": {
+    "coach": "Zlatko Dalić",
+    "wc_editions": 2,
+    "intl_win_rate": 0.60,
+    "knockout_experience": true,
+    "tournament_wins": 0
+  },
+  "Uruguay": {
+    "coach": "Marcelo Bielsa",
+    "wc_editions": 0,
+    "intl_win_rate": 0.53,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Colombia": {
+    "coach": "Néstor Lorenzo",
+    "wc_editions": 0,
+    "intl_win_rate": 0.62,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Morocco": {
+    "coach": "Walid Regragui",
+    "wc_editions": 1,
+    "intl_win_rate": 0.64,
+    "knockout_experience": true,
+    "tournament_wins": 0
+  },
+  "Senegal": {
+    "coach": "Aliou Cissé",
+    "wc_editions": 2,
+    "intl_win_rate": 0.58,
+    "knockout_experience": true,
+    "tournament_wins": 1
+  },
+  "Japan": {
+    "coach": "Hajime Moriyasu",
+    "wc_editions": 1,
+    "intl_win_rate": 0.62,
+    "knockout_experience": true,
+    "tournament_wins": 0
+  },
+  "Mexico": {
+    "coach": "Javier Aguirre",
+    "wc_editions": 2,
+    "intl_win_rate": 0.55,
+    "knockout_experience": true,
+    "tournament_wins": 0
+  },
+  "United States": {
+    "coach": "Mauricio Pochettino",
+    "wc_editions": 0,
+    "intl_win_rate": 0.52,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Canada": {
+    "coach": "Jesse Marsch",
+    "wc_editions": 0,
+    "intl_win_rate": 0.48,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Switzerland": {
+    "coach": "Murat Yakin",
+    "wc_editions": 1,
+    "intl_win_rate": 0.57,
+    "knockout_experience": true,
+    "tournament_wins": 0
+  },
+  "Austria": {
+    "coach": "Ralf Rangnick",
+    "wc_editions": 0,
+    "intl_win_rate": 0.60,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Norway": {
+    "coach": "Ståle Solbakken",
+    "wc_editions": 0,
+    "intl_win_rate": 0.54,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Sweden": {
+    "coach": "Jon Dahl Tomasson",
+    "wc_editions": 0,
+    "intl_win_rate": 0.53,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Ecuador": {
+    "coach": "Sebastián Beccacece",
+    "wc_editions": 0,
+    "intl_win_rate": 0.55,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "South Korea": {
+    "coach": "Hong Myung-bo",
+    "wc_editions": 0,
+    "intl_win_rate": 0.50,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Australia": {
+    "coach": "Tony Popovic",
+    "wc_editions": 0,
+    "intl_win_rate": 0.48,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Turkiye": {
+    "coach": "Vincenzo Montella",
+    "wc_editions": 0,
+    "intl_win_rate": 0.55,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Iran": {
+    "coach": "Amir Ghalenoei",
+    "wc_editions": 0,
+    "intl_win_rate": 0.48,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Algeria": {
+    "coach": "Vladimir Petkovic",
+    "wc_editions": 1,
+    "intl_win_rate": 0.50,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Paraguay": {
+    "coach": "Gustavo Alfaro",
+    "wc_editions": 1,
+    "intl_win_rate": 0.48,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Egypt": {
+    "coach": "Hossam Hassan",
+    "wc_editions": 0,
+    "intl_win_rate": 0.52,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Ivory Coast": {
+    "coach": "Emerse Faé",
+    "wc_editions": 0,
+    "intl_win_rate": 0.55,
+    "knockout_experience": false,
+    "tournament_wins": 1
+  },
+  "Ghana": {
+    "coach": "Otto Addo",
+    "wc_editions": 1,
+    "intl_win_rate": 0.45,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Saudi Arabia": {
+    "coach": "Herve Renard",
+    "wc_editions": 1,
+    "intl_win_rate": 0.52,
+    "knockout_experience": false,
+    "tournament_wins": 2
+  },
+  "Senegal": {
+    "coach": "Aliou Cissé",
+    "wc_editions": 2,
+    "intl_win_rate": 0.58,
+    "knockout_experience": true,
+    "tournament_wins": 1
+  },
+  "Tunisia": {
+    "coach": "Jalel Kadri",
+    "wc_editions": 1,
+    "intl_win_rate": 0.47,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "DR Congo": {
+    "coach": "Sébastien Desabre",
+    "wc_editions": 0,
+    "intl_win_rate": 0.48,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Czech Republic": {
+    "coach": "Ivan Hašek",
+    "wc_editions": 0,
+    "intl_win_rate": 0.50,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Scotland": {
+    "coach": "Steve Clarke",
+    "wc_editions": 0,
+    "intl_win_rate": 0.52,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Panama": {
+    "coach": "Thomas Christiansen",
+    "wc_editions": 0,
+    "intl_win_rate": 0.45,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Qatar": {
+    "coach": "Marquez Lopez",
+    "wc_editions": 1,
+    "intl_win_rate": 0.45,
+    "knockout_experience": false,
+    "tournament_wins": 1
+  },
+  "South Africa": {
+    "coach": "Hugo Broos",
+    "wc_editions": 0,
+    "intl_win_rate": 0.46,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Bosnia and Herzegovina": {
+    "coach": "Sergej Barbarez",
+    "wc_editions": 0,
+    "intl_win_rate": 0.45,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Haiti": {
+    "coach": "Marc Collat",
+    "wc_editions": 0,
+    "intl_win_rate": 0.38,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Cape Verde": {
+    "coach": "Bubista",
+    "wc_editions": 0,
+    "intl_win_rate": 0.45,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Iraq": {
+    "coach": "Jesús Casas",
+    "wc_editions": 0,
+    "intl_win_rate": 0.47,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Jordan": {
+    "coach": "Hussain Yaseen",
+    "wc_editions": 0,
+    "intl_win_rate": 0.43,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Uzbekistan": {
+    "coach": "Srecko Katanec",
+    "wc_editions": 0,
+    "intl_win_rate": 0.45,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "New Zealand": {
+    "coach": "Darren Bazeley",
+    "wc_editions": 0,
+    "intl_win_rate": 0.42,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  },
+  "Curaçao": {
+    "coach": "Remko Bicentini",
+    "wc_editions": 0,
+    "intl_win_rate": 0.40,
+    "knockout_experience": false,
+    "tournament_wins": 0
+  }
+}
