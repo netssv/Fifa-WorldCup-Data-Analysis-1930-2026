@@ -123,8 +123,13 @@ export const useFifaBracket = () => {
       setAiLoading(true);
       const data = await fetchFullBracket();
       if (data) {
+        const groups: Record<string, string[]> = {};
+        for (const [groupName, groupData] of Object.entries(data.groups)) {
+          groups[groupName] = groupData.qualifiers;
+        }
+
         setState({
-          groups: data.groups,
+          groups,
           r32: data.r32,
           r16: data.r16,
           r8: data.r8,

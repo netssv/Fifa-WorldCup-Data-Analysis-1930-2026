@@ -4,16 +4,16 @@ import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 
 def train_models(
-    features_path: str = "data/processed/features_v3.csv",
+    features_path: str = "data/processed/features_v4.csv",
     matches_path: str = "Data/clean_fifa_worldcup_matches.csv",
     models_dir: str = "Predictions and Models Folder"
 ):
     """
-    Trains the home and away goal prediction models using features_v3.csv
+    Trains the home and away goal prediction models using features_v4.csv
     and saves the trained models to disk.
     """
     if not os.path.exists(features_path):
-        raise FileNotFoundError(f"Features file not found at {features_path}. Run build_features_v3 first.")
+        raise FileNotFoundError(f"Features file not found at {features_path}. Run build_features_v4 first.")
     if not os.path.exists(matches_path):
         raise FileNotFoundError(f"Matches file not found at {matches_path}.")
         
@@ -47,6 +47,10 @@ def train_models(
         # Coach experience — Feature Set 6
         "coach_wc_editions", "coach_intl_win_rate", "coach_tournament_wins",
         "coach_experience_diff", "coach_knockout_edge",
+        # Fatigue and Match Load — Feature Set 7
+        "fatigue_avg_club_matches_home", "fatigue_avg_club_matches_away",
+        "fatigue_ucl_players_home", "fatigue_ucl_players_away",
+        "fatigue_index_diff", "fatigue_days_since_last_match_diff"
     ]
     
     X = df_features[feature_cols]

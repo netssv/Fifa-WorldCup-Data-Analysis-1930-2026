@@ -66,9 +66,10 @@ _eafc_ratings: dict[str, dict[str, float]] = {}
 _xg_features: dict[str, dict[str, float]] = {}
 _odds_features: dict[str, dict[str, float]] = {}
 _coach_features: dict[str, dict] = {}
+_fatigue_features: dict[str, dict] = {}
 
 def _load_extra_features() -> None:
-    global _squad_values, _eafc_ratings, _xg_features, _odds_features, _coach_features
+    global _squad_values, _eafc_ratings, _xg_features, _odds_features, _coach_features, _fatigue_features
     squad_path = BASE_DIR / "data" / "processed" / "squad_values_2026.csv"
     eafc_path = BASE_DIR / "data" / "processed" / "eafc_ratings_2026.csv"
     xg_path = BASE_DIR / "data" / "processed" / "xg_features_2026.csv"
@@ -146,6 +147,20 @@ def _load_extra_features() -> None:
                 }
         except Exception as exc:
             print(f"[WARN] Could not load coach features: {exc}")
+
+    fatigue_path = BASE_DIR / "data" / "processed" / "fatigue_features.csv"
+    if fatigue_path.exists():
+        try:
+            df = pd.read_csv(fatigue_path)
+            for _, row in df.iterrows():
+                _fatigue_features[row["team_name"]] = {
+                    "avg_club_matches": float(row["avg_club_matches"]),
+                    "ucl_players_count": float(row["ucl_players_count"]),
+                    "days_since_last_match": float(row["days_since_last_match"]),
+                    "fatigue_index": float(row["fatigue_index"]),
+                }
+        except Exception as exc:
+            print(f"[WARN] Could not load fatigue features: {exc}")
 
 def _load_models() -> bool:
     """Load RF models from disk. Returns True if successful."""
@@ -375,6 +390,19 @@ def predict_with_model(team_a: str, team_b: str, stage: str = "r32") -> tuple[fl
             "coach_knockout_edge": float(
                 (1 if _coach_features.get(team_a, {}).get("knockout_experience", False) else 0) -
                 (1 if _coach_features.get(team_b, {}).get("knockout_experience", False) else 0)
+            ),
+            # Fatigue and Match Load — Feature Set 7
+            "fatigue_avg_club_matches_home": float(_fatigue_features.get(team_a, {}).get("avg_club_matches", 25.0)),
+            "fatigue_avg_club_matches_away": float(_fatigue_features.get(team_b, {}).get("avg_club_matches", 25.0)),
+            "fatigue_ucl_players_home": float(_fatigue_features.get(team_a, {}).get("ucl_players_count", 0.0)),
+            "fatigue_ucl_players_away": float(_fatigue_features.get(team_b, {}).get("ucl_players_count", 0.0)),
+            "fatigue_index_diff": float(
+                _fatigue_features.get(team_a, {}).get("fatigue_index", 25.0 / 38) -
+                _fatigue_features.get(team_b, {}).get("fatigue_index", 25.0 / 38)
+            ),
+            "fatigue_days_since_last_match_diff": float(
+                _fatigue_features.get(team_a, {}).get("days_since_last_match", 18.0) -
+                _fatigue_features.get(team_b, {}).get("days_since_last_match", 18.0)
             ),
         }])
 

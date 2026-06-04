@@ -3366,8 +3366,12 @@ const useFifaBracket = ()=>{
             setAiLoading(true);
             const data = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["fetchFullBracket"])();
             if (data) {
+                const groups = {};
+                for (const [groupName, groupData] of Object.entries(data.groups)){
+                    groups[groupName] = groupData.qualifiers;
+                }
                 setState({
-                    groups: data.groups,
+                    groups,
                     r32: data.r32,
                     r16: data.r16,
                     r8: data.r8,
