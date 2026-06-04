@@ -65,9 +65,10 @@ _squad_values: dict[str, dict[str, float]] = {}
 _eafc_ratings: dict[str, dict[str, float]] = {}
 _xg_features: dict[str, dict[str, float]] = {}
 _odds_features: dict[str, dict[str, float]] = {}
+_coach_features: dict[str, dict] = {}
 
 def _load_extra_features() -> None:
-    global _squad_values, _eafc_ratings, _xg_features
+    global _squad_values, _eafc_ratings, _xg_features, _odds_features, _coach_features
     squad_path = BASE_DIR / "data" / "processed" / "squad_values_2026.csv"
     eafc_path = BASE_DIR / "data" / "processed" / "eafc_ratings_2026.csv"
     xg_path = BASE_DIR / "data" / "processed" / "xg_features_2026.csv"
@@ -127,6 +128,24 @@ def _load_extra_features() -> None:
                 }
         except Exception as exc:
             print(f"[WARN] Could not load odds features: {exc}")
+
+    coaches_json_path = BASE_DIR / "data" / "coaches_wc2026.json"
+    if coaches_json_path.exists():
+        try:
+            import json
+            with open(coaches_json_path, encoding="utf-8") as fh:
+                raw = json.load(fh)
+            for team_name, stats in raw.items():
+                if team_name.startswith("_"):          # skip _metadata
+                    continue
+                _coach_features[team_name] = {
+                    "wc_editions": int(stats.get("wc_editions", 0)),
+                    "intl_win_rate": float(stats.get("intl_win_rate", 0.45)),
+                    "tournament_wins": int(stats.get("tournament_wins", 0)),
+                    "knockout_experience": bool(stats.get("knockout_experience", False)),
+                }
+        except Exception as exc:
+            print(f"[WARN] Could not load coach features: {exc}")
 
 def _load_models() -> bool:
     """Load RF models from disk. Returns True if successful."""
@@ -344,6 +363,19 @@ def predict_with_model(team_a: str, team_b: str, stage: str = "r32") -> tuple[fl
             "odds_implied_draw": odds_a.get("implied_draw", 0.334),
             "odds_market_confidence": (odds_a.get("market_confidence", 0.5) + odds_b.get("market_confidence", 0.5)) / 2,
             "odds_margin": (odds_a.get("odds_margin", 0.05) + odds_b.get("odds_margin", 0.05)) / 2,
+            # Coach experience — Feature Set 6
+            # Defaults: 0 WC editions, 0.45 win rate, 0 trophies, no knockout exp
+            "coach_wc_editions": float(_coach_features.get(team_a, {}).get("wc_editions", 0)),
+            "coach_intl_win_rate": float(_coach_features.get(team_a, {}).get("intl_win_rate", 0.45)),
+            "coach_tournament_wins": float(_coach_features.get(team_a, {}).get("tournament_wins", 0)),
+            "coach_experience_diff": float(
+                _coach_features.get(team_a, {}).get("wc_editions", 0) -
+                _coach_features.get(team_b, {}).get("wc_editions", 0)
+            ),
+            "coach_knockout_edge": float(
+                (1 if _coach_features.get(team_a, {}).get("knockout_experience", False) else 0) -
+                (1 if _coach_features.get(team_b, {}).get("knockout_experience", False) else 0)
+            ),
         }])
 
         rf_goals_a = float(_home_model.predict(X)[0])
