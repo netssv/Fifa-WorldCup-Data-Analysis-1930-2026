@@ -8,6 +8,7 @@ import { RoundColumn } from "./RoundColumn";
 import { BracketSummary } from "./BracketSummary";
 import { BracketHeader } from "./BracketHeader";
 import { AiLab } from "./AiLab";
+import { WinProbsPanel } from "./WinProbsPanel";
 import { useFifaBracket } from "../hooks/useFifaBracket";
 
 const NAVIGATION_TABS: { id: Round | "summary" | "ai_lab"; label: string }[] = [
@@ -47,6 +48,8 @@ export const FifaBracket: React.FC = () => {
     setBoostAmount,
     simRuns,
     setSimRuns,
+    winProbs,
+    simRunsTotal,
   } = useFifaBracket();
 
   const currentTabIndex = NAVIGATION_TABS.findIndex((t) => t.id === activeTab);
@@ -99,6 +102,11 @@ export const FifaBracket: React.FC = () => {
         <div className="bg-green-100 dark:bg-green-950 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-300 px-4 py-2.5 text-sm font-medium text-center animate-pulse rounded-none">
           {saveStatus}
         </div>
+      )}
+
+      {/* Simulation win stats panel — shows after AI auto-fill with multiple runs */}
+      {winProbs && (
+        <WinProbsPanel winProbs={winProbs} simRunsTotal={simRunsTotal} />
       )}
 
       {/* Navigation Tabs */}

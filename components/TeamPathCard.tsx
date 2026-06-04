@@ -33,7 +33,7 @@ export const TeamPathCard: React.FC = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+    <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-none p-6 shadow-sm">
       <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-1">
         Tournament Path Probability
       </h3>
@@ -95,9 +95,9 @@ export const TeamPathCard: React.FC = () => {
                     {percentage.toFixed(1)}%
                   </span>
                 </div>
-                <div className="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                <div className="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-none overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-emerald-500 to-green-400 transition-all duration-500 rounded-full"
+                    className="h-full bg-gradient-to-r from-emerald-500 to-green-400 transition-all duration-500 rounded-none"
                     style={{ width: `${Math.max(percentage, 1)}%` }}
                   />
                 </div>

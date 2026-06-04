@@ -20,6 +20,8 @@ export const useFifaBracket = () => {
   const [boostTeam, setBoostTeam] = useState<string>("");
   const [boostAmount, setBoostAmount] = useState<number>(0);
   const [simRuns, setSimRuns] = useState<number>(1);
+  const [winProbs, setWinProbs] = useState<Record<string, number> | null>(null);
+  const [simRunsTotal, setSimRunsTotal] = useState<number>(1);
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -125,6 +127,7 @@ export const useFifaBracket = () => {
   const handleAiAutoFill = async (upToRound: Round | "all" = "all") => {
     try {
       setAiLoading(true);
+      setWinProbs(null);
       const data = await fetchFullBracket(
         chaosFactor,
         boostTeam || undefined,
@@ -132,6 +135,12 @@ export const useFifaBracket = () => {
         simRuns
       );
       if (data) {
+        // Store win probabilities from multi-run simulation
+        if (data.win_probabilities && Object.keys(data.win_probabilities).length > 0) {
+          setWinProbs(data.win_probabilities);
+          setSimRunsTotal(simRuns);
+        }
+
         setState(prev => {
           const groups: Record<string, string[]> = { ...prev.groups };
           if (upToRound === "all" || upToRound === "groups" || ["r32", "r16", "r8", "semi", "final"].includes(upToRound)) {
@@ -202,6 +211,8 @@ export const useFifaBracket = () => {
     boostAmount,
     setBoostAmount,
     simRuns,
-    setSimRuns
+    setSimRuns,
+    winProbs,
+    simRunsTotal,
   };
 };

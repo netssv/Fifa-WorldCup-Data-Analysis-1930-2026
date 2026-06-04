@@ -19,7 +19,7 @@ export const BracketSummary: React.FC<BracketSummaryProps> = ({ state }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+    <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-none p-6 shadow-sm">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-4 border-b border-gray-100 dark:border-slate-800">
         <div>
           <h2 className="text-xl font-bold text-slate-800 dark:text-white">
@@ -29,7 +29,7 @@ export const BracketSummary: React.FC<BracketSummaryProps> = ({ state }) => {
             Full overview of your predicted tournament path.
           </p>
         </div>
-        <div className="bg-slate-900 dark:bg-slate-850 text-white rounded-xl px-5 py-3 text-right">
+        <div className="bg-slate-900 dark:bg-slate-850 text-white rounded-none px-5 py-3 text-right">
           <span className="text-xs uppercase tracking-wider font-semibold text-slate-400 block">
             Max Potential Points
           </span>

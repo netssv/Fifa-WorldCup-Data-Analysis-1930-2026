@@ -1,7 +1,7 @@
 import React from "react";
 
 export const TechnicalPanel: React.FC = () => (
-  <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-2xl p-6 space-y-6">
+  <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-none p-6 space-y-6">
     <div>
       <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-1.5 flex items-center gap-2">
         <svg className="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -17,7 +17,7 @@ export const TechnicalPanel: React.FC = () => (
 
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Active Model Stack */}
-      <div className="bg-white dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800 rounded-xl p-4.5 space-y-3">
+      <div className="bg-white dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800 rounded-none p-4.5 space-y-3">
         <span className="text-xs font-bold uppercase tracking-wider text-green-600 dark:text-green-400">
           Active Model Stack (V5)
         </span>
@@ -39,7 +39,7 @@ export const TechnicalPanel: React.FC = () => (
       </div>
 
       {/* Datasets Used */}
-      <div className="bg-white dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800 rounded-xl p-4.5 space-y-3">
+      <div className="bg-white dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800 rounded-none p-4.5 space-y-3">
         <span className="text-xs font-bold uppercase tracking-wider text-green-600 dark:text-green-400">
           Training & Feature Datasets
         </span>
@@ -83,7 +83,7 @@ export const TechnicalPanel: React.FC = () => (
 );
 
 const RoadmapCard: React.FC<{ title: string; desc: string }> = ({ title, desc }) => (
-  <div className="p-3 bg-white dark:bg-slate-950 border border-green-500/20 rounded-lg relative overflow-hidden">
+  <div className="p-3 bg-white dark:bg-slate-950 border border-green-500/20 rounded-none relative overflow-hidden">
     <div className="absolute top-0 right-0 bg-green-500 text-white text-[8px] font-black uppercase px-1.5 py-0.2 rounded-bl-md tracking-wider">
       Live
     </div>

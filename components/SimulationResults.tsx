@@ -31,7 +31,7 @@ export const SimulationResults: React.FC<SimulationResultsProps> = ({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
       {/* Probabilities Card */}
-      <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+      <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-none p-6 shadow-sm flex flex-col justify-between">
         <div>
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-bold text-slate-800 dark:text-white">
@@ -41,7 +41,7 @@ export const SimulationResults: React.FC<SimulationResultsProps> = ({
               <span className="text-xs uppercase tracking-wider font-semibold text-slate-400">
                 Confidence:
               </span>
-              <span className={`text-xs px-2.5 py-1 rounded-full font-bold uppercase ${getConfidenceBadgeStyle(result.confidence)}`}>
+              <span className={`text-xs px-2.5 py-1 rounded-none font-bold uppercase ${getConfidenceBadgeStyle(result.confidence)}`}>
                 {result.confidence} ({(result.confidence_score * 100).toFixed(1)}%)
               </span>
             </div>
@@ -68,7 +68,7 @@ export const SimulationResults: React.FC<SimulationResultsProps> = ({
           <span className="text-sm text-slate-500 dark:text-slate-400">
             Predicted Outcome:
           </span>
-          <div className="flex items-center gap-2.5 font-bold text-slate-850 dark:text-white bg-slate-50 dark:bg-slate-950 px-4 py-2.5 rounded-xl border border-slate-200/60 dark:border-slate-800">
+          <div className="flex items-center gap-2.5 font-bold text-slate-850 dark:text-white bg-slate-50 dark:bg-slate-950 px-4 py-2.5 rounded-none border border-slate-200/60 dark:border-slate-800">
             <span className="text-xl">{TEAM_FLAGS[result.predicted_winner]}</span>
             <span>{result.predicted_winner} advances/wins</span>
           </div>
@@ -110,7 +110,7 @@ const ProbabilityBar: React.FC<ProbabilityBarProps> = ({
       </span>
       <span>{(probability * 100).toFixed(1)}%</span>
     </div>
-    <div className="w-full bg-slate-100 dark:bg-slate-800 h-3 rounded-full overflow-hidden">
+    <div className="w-full bg-slate-100 dark:bg-slate-800 h-3 rounded-none overflow-hidden">
       <div
         className={`h-full transition-all duration-500 ${
           isNeutral ? "bg-slate-400 dark:bg-slate-600" : getProbabilityBarColor(probability)
@@ -126,7 +126,7 @@ const ModelFeaturesCard: React.FC<{ result: MatchPrediction }> = ({ result }) =>
   const eloDiffIsPositive = elo_diff >= 0;
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm space-y-5">
+    <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-none p-6 shadow-sm space-y-5">
       <h3 className="text-lg font-bold text-slate-800 dark:text-white">
         Model Feature Details
       </h3>
@@ -183,7 +183,7 @@ const FeatureRow: React.FC<FeatureRowProps> = ({
       <span className="text-sm font-bold text-slate-700 dark:text-slate-200 block">{title}</span>
       <span className="text-xs text-slate-400">{subtitle}</span>
     </div>
-    <span className={`text-sm font-extrabold px-3 py-1 rounded-lg ${valueStyle}`}>
+    <span className={`text-sm font-extrabold px-3 py-1 rounded-none ${valueStyle}`}>
       {value}
     </span>
   </div>

@@ -11,7 +11,7 @@ export const TeamCompareCard: React.FC<TeamCompareCardProps> = ({ teamName, posi
 
   return (
     <div 
-      className={`bg-slate-50 dark:bg-slate-950/60 border border-slate-200/60 dark:border-slate-800 rounded-2xl p-5 flex flex-col items-center justify-center transition-all duration-300 hover:shadow-md hover:border-green-500/30 dark:hover:border-green-500/20 group relative overflow-hidden ${
+      className={`bg-slate-50 dark:bg-slate-950/60 border border-slate-200/60 dark:border-slate-800 rounded-none p-5 flex flex-col items-center justify-center transition-all duration-300 hover:shadow-md hover:border-green-500/30 dark:hover:border-green-500/20 group relative overflow-hidden ${
         position === "left" ? "animate-slide-in-left" : "animate-slide-in-right"
       }`}
     >
@@ -26,15 +26,15 @@ export const TeamCompareCard: React.FC<TeamCompareCardProps> = ({ teamName, posi
       </h4>
 
       <div className="w-full grid grid-cols-3 gap-2.5 text-center text-xs">
-        <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 rounded-xl py-2 px-1">
+        <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 rounded-none py-2 px-1">
           <span className="text-slate-400 dark:text-slate-500 block mb-0.5 uppercase tracking-wider text-[10px] font-bold">ELO</span>
           <span className="font-extrabold text-slate-700 dark:text-slate-200">{stats.elo}</span>
         </div>
-        <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 rounded-xl py-2 px-1">
+        <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 rounded-none py-2 px-1">
           <span className="text-slate-400 dark:text-slate-500 block mb-0.5 uppercase tracking-wider text-[10px] font-bold">EA FC</span>
           <span className="font-extrabold text-slate-700 dark:text-slate-200">{stats.overall.toFixed(0)}</span>
         </div>
-        <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 rounded-xl py-2 px-1">
+        <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 rounded-none py-2 px-1">
           <span className="text-slate-400 dark:text-slate-500 block mb-0.5 uppercase tracking-wider text-[10px] font-bold">VALUE</span>
           <span className="font-extrabold text-slate-700 dark:text-slate-200">{stats.valueM}M</span>
         </div>

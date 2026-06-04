@@ -28,7 +28,7 @@ export const RoundColumn: React.FC<RoundColumnProps> = ({
   const reachedLimit = selections.length >= limit;
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+    <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-none p-6 shadow-sm">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 mb-6 pb-4 border-b border-gray-100 dark:border-slate-800">
         <div>
           <h2 className="text-xl font-bold text-slate-800 dark:text-white">
@@ -38,7 +38,7 @@ export const RoundColumn: React.FC<RoundColumnProps> = ({
             Select the teams advancing to the next stage.
           </p>
         </div>
-        <span className="bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-400 font-semibold px-3.5 py-1.5 rounded-full text-sm">
+        <span className="bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-400 font-semibold px-3.5 py-1.5 rounded-none text-sm">
           {selections.length} / {limit} slots filled
         </span>
       </div>
@@ -84,7 +84,7 @@ export const RoundColumn: React.FC<RoundColumnProps> = ({
       </div>
       
       {previousRoundTeams.length === 0 && (
-        <div className="text-center py-10 border-2 border-dashed border-gray-200 dark:border-slate-850 rounded-xl">
+        <div className="text-center py-10 border-2 border-dashed border-gray-200 dark:border-slate-850 rounded-none">
           <p className="text-slate-400 dark:text-slate-600 text-sm">
             Please complete selections in the previous round to unlock this stage.
           </p>

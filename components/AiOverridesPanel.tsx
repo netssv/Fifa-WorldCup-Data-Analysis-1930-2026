@@ -77,7 +77,7 @@ export const AiOverridesPanel: React.FC<OverridesProps> = (p) => {
 
       {/* Sliders panel (only when enabled) */}
       {p.customEnabled && (
-        <div className="space-y-4 p-4 bg-slate-50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800 rounded-xl animate-fade-in">
+        <div className="space-y-4 p-4 bg-slate-50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800 rounded-none animate-fade-in">
           {/* Column headers */}
           <div className="grid grid-cols-2 gap-6 text-center border-b border-slate-200 dark:border-slate-800 pb-2">
             <span className="text-xs font-black uppercase text-emerald-600 dark:text-emerald-400">{p.teamA}</span>
@@ -130,7 +130,7 @@ const Slider: React.FC<SliderProps> = ({ label, val, onChange, min, max, step, p
     <input
       type="range" min={min} max={max} step={step} value={val}
       onChange={(e) => onChange(parseFloat(e.target.value))}
-      className="w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+      className="w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-none appearance-none cursor-pointer accent-emerald-500"
     />
   </div>
 );
