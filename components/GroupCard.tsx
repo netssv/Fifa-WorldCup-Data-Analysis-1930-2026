@@ -47,7 +47,7 @@ export const GroupCard: React.FC<GroupCardProps> = ({
             <button
               onClick={handleAiSuggest}
               disabled={loading}
-              className="text-xs px-2 py-0.5 rounded-md font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-250 dark:border-emerald-900/50 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-500 dark:hover:text-white transition duration-150 disabled:opacity-50 flex items-center gap-1 cursor-pointer active:scale-95"
+              className="text-xs px-2 py-0.5 rounded-none font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-250 dark:border-emerald-900/50 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-500 dark:hover:text-white transition duration-155 disabled:opacity-50 flex items-center gap-1 cursor-pointer active:scale-95"
               title="Predict qualifiers using ML models"
             >
               {loading ? (
@@ -56,12 +56,12 @@ export const GroupCard: React.FC<GroupCardProps> = ({
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
               ) : (
-                <span>✨ AI</span>
+                <span>AI</span>
               )}
             </button>
           )}
         </div>
-        <span className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs px-2.5 py-1 rounded-full font-medium">
+        <span className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs px-2.5 py-1 font-medium">
           {selectedTeams.length} / 2 selected
         </span>
       </div>
@@ -77,18 +77,15 @@ export const GroupCard: React.FC<GroupCardProps> = ({
               key={team}
               onClick={() => onSelectTeam(team)}
               disabled={disabled}
-              className={`w-full flex items-center justify-between p-3 rounded-lg border text-left font-medium transition-all duration-200 hover:scale-[1.02] active:scale-95 ${
+              className={`w-full flex items-center justify-between p-3 rounded-none border text-left font-medium transition-all duration-200 hover:scale-[1.02] active:scale-95 ${
                 selected
                   ? "bg-green-600 border-green-600 text-white shadow-sm"
                   : disabled
                   ? "bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-850 text-slate-300 dark:text-slate-700 cursor-not-allowed hover:scale-100"
-                  : "bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  : "bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-850 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
               }`}
             >
               <span className="flex items-center gap-3">
-                <span className="text-xl" role="img" aria-label={`${team} flag`}>
-                  {flag}
-                </span>
                 <span>{team}</span>
               </span>
               {selected && (

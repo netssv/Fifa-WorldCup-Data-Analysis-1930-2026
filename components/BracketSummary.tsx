@@ -11,15 +11,8 @@ export const BracketSummary: React.FC<BracketSummaryProps> = ({ state }) => {
   const groupTeams = Object.values(state.groups).flat();
 
   const renderTeamItem = (team: string) => {
-    const flag = TEAM_FLAGS[team] || "🏳️";
     return (
-      <div
-        key={team}
-        className="flex items-center gap-2 p-1.5 rounded bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 text-xs font-medium text-slate-700 dark:text-slate-200 transition-colors"
-      >
-        <span role="img" aria-label={`${team} flag`}>
-          {flag}
-        </span>
+      <div className="flex items-center gap-2 p-1.5 rounded bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 text-xs font-medium text-slate-700 dark:text-slate-200 transition-colors">
         <span className="truncate">{team}</span>
       </div>
     );
@@ -53,7 +46,7 @@ export const BracketSummary: React.FC<BracketSummaryProps> = ({ state }) => {
             Groups ({groupTeams.length})
           </h3>
           <div className="space-y-1.5 max-h-[450px] overflow-y-auto pr-1">
-            {groupTeams.map(renderTeamItem)}
+            {groupTeams.map((t) => <React.Fragment key={t}>{renderTeamItem(t)}</React.Fragment>)}
             {groupTeams.length === 0 && (
               <p className="text-xs text-slate-400 italic">No selections</p>
             )}
@@ -66,7 +59,7 @@ export const BracketSummary: React.FC<BracketSummaryProps> = ({ state }) => {
             Round of 32 ({state.r32.length})
           </h3>
           <div className="space-y-1.5 max-h-[450px] overflow-y-auto pr-1">
-            {state.r32.map(renderTeamItem)}
+            {state.r32.map((t) => <React.Fragment key={t}>{renderTeamItem(t)}</React.Fragment>)}
             {state.r32.length === 0 && (
               <p className="text-xs text-slate-400 italic">No selections</p>
             )}
@@ -79,7 +72,7 @@ export const BracketSummary: React.FC<BracketSummaryProps> = ({ state }) => {
             Round of 16 ({state.r16.length})
           </h3>
           <div className="space-y-1.5 max-h-[450px] overflow-y-auto pr-1">
-            {state.r16.map(renderTeamItem)}
+            {state.r16.map((t) => <React.Fragment key={t}>{renderTeamItem(t)}</React.Fragment>)}
             {state.r16.length === 0 && (
               <p className="text-xs text-slate-400 italic">No selections</p>
             )}
@@ -92,7 +85,7 @@ export const BracketSummary: React.FC<BracketSummaryProps> = ({ state }) => {
             Quarterfinals ({state.r8.length})
           </h3>
           <div className="space-y-1.5 max-h-[450px] overflow-y-auto pr-1">
-            {state.r8.map(renderTeamItem)}
+            {state.r8.map((t) => <React.Fragment key={t}>{renderTeamItem(t)}</React.Fragment>)}
             {state.r8.length === 0 && (
               <p className="text-xs text-slate-400 italic">No selections</p>
             )}
@@ -105,7 +98,7 @@ export const BracketSummary: React.FC<BracketSummaryProps> = ({ state }) => {
             Semifinals ({state.semi.length})
           </h3>
           <div className="space-y-1.5 max-h-[450px] overflow-y-auto pr-1">
-            {state.semi.map(renderTeamItem)}
+            {state.semi.map((t) => <React.Fragment key={t}>{renderTeamItem(t)}</React.Fragment>)}
             {state.semi.length === 0 && (
               <p className="text-xs text-slate-400 italic">No selections</p>
             )}

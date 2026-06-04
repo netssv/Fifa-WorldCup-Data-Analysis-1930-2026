@@ -49,7 +49,7 @@ export const TeamPathCard: React.FC = () => {
           <select
             value={selectedTeam}
             onChange={(e) => setSelectedTeam(e.target.value)}
-            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
+            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-none px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
           >
             {SORTED_TEAMS.map((team) => (
               <option key={team} value={team}>
@@ -61,7 +61,7 @@ export const TeamPathCard: React.FC = () => {
         <button
           onClick={handleAnalyze}
           disabled={loading}
-          className="bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 dark:hover:bg-slate-600 text-white font-semibold py-3 px-6 rounded-xl text-sm transition duration-150 disabled:opacity-50 cursor-pointer active:scale-95"
+          className="bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 dark:hover:bg-slate-600 text-white font-semibold py-3 px-6 rounded-none text-sm transition duration-150 disabled:opacity-50 cursor-pointer active:scale-95"
         >
           {loading ? "Analyzing..." : "Analyze Path"}
         </button>

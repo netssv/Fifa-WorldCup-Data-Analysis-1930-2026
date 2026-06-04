@@ -1,6 +1,5 @@
 import React from "react";
 
-/** Static panel showing the active ML stack, datasets, and features integration */
 export const TechnicalPanel: React.FC = () => (
   <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-2xl p-6 space-y-6">
     <div>
@@ -20,7 +19,7 @@ export const TechnicalPanel: React.FC = () => (
       {/* Active Model Stack */}
       <div className="bg-white dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800 rounded-xl p-4.5 space-y-3">
         <span className="text-xs font-bold uppercase tracking-wider text-green-600 dark:text-green-400">
-          Active Model Stack (V2)
+          Active Model Stack (V5)
         </span>
         <div className="space-y-2 text-sm text-slate-650 dark:text-slate-350">
           <p>
@@ -30,12 +29,11 @@ export const TechnicalPanel: React.FC = () => (
             </code>
           </p>
           <p>
-            <strong>Prediction Goal Blend:</strong> 35% Random Forest predicted goals,
+            <strong>Prediction Blend:</strong> 35% Random Forest predicted goals,
             65% ELO & Form expected goals formula (Ensemble blend).
           </p>
           <p>
-            <strong>Probability Curve:</strong> Poisson PMF simulation across goal grids
-            (0 to 6 goals) to estimate probabilities and resolve draws.
+            <strong>Poisson simulation:</strong> 0 to 6 goal grid mass resolution for draws and win rates.
           </p>
         </div>
       </div>
@@ -47,19 +45,16 @@ export const TechnicalPanel: React.FC = () => (
         </span>
         <div className="space-y-2 text-sm text-slate-650 dark:text-slate-350">
           <p>
-            <strong>Historical Matches:</strong>{" "}
+            <strong>Matches:</strong>{" "}
             <code className="bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-xs">
               clean_fifa_worldcup_matches.csv
-            </code>{" "}
-            (contains over 970 historical World Cup matches from 1930 to 2022).
+            </code>
           </p>
           <p>
-            <strong>FIFA World Rankings / ELO Ratings:</strong> Standardized FIFA ratings
-            mapped for all 48 teams in Group stage setup.
+            <strong>FIFA ELO / Form / H2H:</strong> Baseline team capabilities and head-to-head match histories.
           </p>
           <p>
-            <strong>Recent Form & Head-to-Head:</strong> Stored statistics mapped from
-            recent fixtures.
+            <strong>Sim parameters:</strong> Fully dynamic parameter overrides enabled for custom simulations.
           </p>
         </div>
       </div>
@@ -71,45 +66,28 @@ export const TechnicalPanel: React.FC = () => (
         <svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        Integrated Advanced Feature Datasets (V2 Model Status)
+        Integrated Advanced Feature Datasets (V5 Active Pipeline)
       </h4>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-        <RoadmapCard
-          title="1. Squad Value (Transfermarkt)"
-          description="Integrated. Player market valuations are aggregated per squad. Highly correlated with cup advancement."
-          active={true}
-        />
-        <RoadmapCard
-          title="2. EA FC 26 Player Ratings"
-          description="Integrated. Ratings of the top 23 squad players in the latest database are mapped to evaluate team potential."
-          active={true}
-        />
-        <RoadmapCard
-          title="3. Venue Altitude & Climate"
-          description="Integrated. Altitude parameters mapped for all 2026 host venues (e.g. Mexico City at 2,240m) to calculate wear factors."
-          active={true}
-        />
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+        <RoadmapCard title="1. Squad Value" desc="Transfermarkt squad values." />
+        <RoadmapCard title="2. EA FC Ratings" desc="Top-23 squad player ratings." />
+        <RoadmapCard title="3. Venue Altitude" desc="Host stadium elevation wear factors." />
+        <RoadmapCard title="4. xG Statistics" desc="Underlying expected goals parameters." />
+        <RoadmapCard title="5. Market Odds" desc="Live bookmaker decimal odds implied probabilities." />
+        <RoadmapCard title="6. Coach Experience" desc="National coach tenure and tournament records." />
+        <RoadmapCard title="7. Fatigue & Match Load" desc="Days since last match and club match overload." />
+        <RoadmapCard title="8. Pressure & Key Matches" desc="Penalty shootout win rate, records vs top-20." />
       </div>
     </div>
   </div>
 );
 
-/* ── Atomic sub-component ──────────────────────────────────────────── */
-
-const RoadmapCard: React.FC<{ title: string; description: string; active?: boolean }> = ({
-  title,
-  description,
-  active = false,
-}) => (
-  <div className={`p-3 bg-white dark:bg-slate-950 border rounded-lg transition-colors relative overflow-hidden ${
-    active ? "border-green-500/30 dark:border-green-500/20" : "border-slate-200/60 dark:border-slate-800"
-  }`}>
-    {active && (
-      <div className="absolute top-0 right-0 bg-green-500 text-white text-[9px] font-black uppercase px-2 py-0.5 rounded-bl-md tracking-wider">
-        Active
-      </div>
-    )}
+const RoadmapCard: React.FC<{ title: string; desc: string }> = ({ title, desc }) => (
+  <div className="p-3 bg-white dark:bg-slate-950 border border-green-500/20 rounded-lg relative overflow-hidden">
+    <div className="absolute top-0 right-0 bg-green-500 text-white text-[8px] font-black uppercase px-1.5 py-0.2 rounded-bl-md tracking-wider">
+      Live
+    </div>
     <h5 className="font-bold text-slate-700 dark:text-slate-350 mb-1">{title}</h5>
-    <p className="text-slate-400">{description}</p>
+    <p className="text-slate-400 text-[11px] leading-tight">{desc}</p>
   </div>
 );

@@ -47,14 +47,12 @@ export const RoundColumn: React.FC<RoundColumnProps> = ({
         {previousRoundTeams.map(team => {
           const selected = isSelected(team);
           const disabled = !selected && reachedLimit;
-          const flag = TEAM_FLAGS[team] || "🏳️";
-
           return (
             <button
               key={team}
               onClick={() => onToggleTeam(team)}
               disabled={disabled}
-              className={`flex items-center justify-between p-3.5 rounded-xl border text-left font-medium transition-all duration-200 hover:scale-[1.02] active:scale-95 ${
+              className={`flex items-center justify-between p-3.5 rounded-none border text-left font-medium transition-all duration-200 hover:scale-[1.02] active:scale-95 ${
                 selected
                   ? "bg-green-600 border-green-600 text-white shadow-sm shadow-green-600/20"
                   : disabled
@@ -63,9 +61,6 @@ export const RoundColumn: React.FC<RoundColumnProps> = ({
               }`}
             >
               <span className="flex items-center gap-2.5 overflow-hidden">
-                <span className="text-xl shrink-0" role="img" aria-label={`${team} flag`}>
-                  {flag}
-                </span>
                 <span className="truncate text-sm">{team}</span>
               </span>
               {selected && (

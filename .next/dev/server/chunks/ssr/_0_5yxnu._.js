@@ -549,10 +549,11 @@ async function get(path) {
     if (!res.ok) throw new Error(`API ${path} error: ${res.status}`);
     return res.json();
 }
-const predictMatch = (team_a, team_b, stage = "group")=>post("/predict/match", {
+const predictMatch = (team_a, team_b, stage = "group", overrides)=>post("/predict/match", {
         team_a,
         team_b,
-        stage
+        stage,
+        ...overrides
     });
 const predictGroup = (group_name, teams)=>post("/predict/group", {
         group_name,
@@ -1459,6 +1460,18 @@ const useMatchSimulator = ()=>{
     const [isSimulating, setIsSimulating] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [simulationResult, setSimulationResult] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [simulationError, setSimulationError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
+    // Custom AI Overrides States
+    const [customEnabled, setCustomEnabled] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [eloA, setEloA] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(1800);
+    const [eloB, setEloB] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(1800);
+    const [formA, setFormA] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0.5);
+    const [formB, setFormB] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0.5);
+    const [penaltyA, setPenaltyA] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0.5);
+    const [penaltyB, setPenaltyB] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0.5);
+    const [bigMatchA, setBigMatchA] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0.5);
+    const [bigMatchB, setBigMatchB] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0.5);
+    const [knockoutA, setKnockoutA] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0.5);
+    const [knockoutB, setKnockoutB] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0.5);
     const runSimulation = async ()=>{
         if (teamA === teamB) {
             setSimulationError("Please select two different teams to simulate.");
@@ -1467,7 +1480,19 @@ const useMatchSimulator = ()=>{
         setSimulationError("");
         setIsSimulating(true);
         try {
-            const prediction = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["predictMatch"])(teamA, teamB, stage);
+            const overrides = customEnabled ? {
+                elo_a_override: eloA,
+                elo_b_override: eloB,
+                form_a_override: formA,
+                form_b_override: formB,
+                penalty_a_override: penaltyA,
+                penalty_b_override: penaltyB,
+                big_match_a_override: bigMatchA,
+                big_match_b_override: bigMatchB,
+                knockout_a_override: knockoutA,
+                knockout_b_override: knockoutB
+            } : {};
+            const prediction = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["predictMatch"])(teamA, teamB, stage, overrides);
             setSimulationResult(prediction);
         } catch (err) {
             console.error(err);
@@ -1487,7 +1512,30 @@ const useMatchSimulator = ()=>{
         simulationResult,
         simulationError,
         runSimulation,
-        availableTeams: SORTED_TEAM_NAMES
+        availableTeams: SORTED_TEAM_NAMES,
+        // Overrides exports
+        customEnabled,
+        setCustomEnabled,
+        eloA,
+        setEloA,
+        eloB,
+        setEloB,
+        formA,
+        setFormA,
+        formB,
+        setFormB,
+        penaltyA,
+        setPenaltyA,
+        penaltyB,
+        setPenaltyB,
+        bigMatchA,
+        setBigMatchA,
+        bigMatchB,
+        setBigMatchB,
+        knockoutA,
+        setKnockoutA,
+        knockoutB,
+        setKnockoutB
     };
 };
 }),

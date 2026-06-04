@@ -16,6 +16,10 @@ export const useFifaBracket = () => {
   const [userName, setUserName] = useState<string>("");
   const [saveStatus, setSaveStatus] = useState<string>("");
   const [aiLoading, setAiLoading] = useState<boolean>(false);
+  const [chaosFactor, setChaosFactor] = useState<number>(0.0);
+  const [boostTeam, setBoostTeam] = useState<string>("");
+  const [boostAmount, setBoostAmount] = useState<number>(0);
+  const [simRuns, setSimRuns] = useState<number>(1);
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -118,23 +122,37 @@ export const useFifaBracket = () => {
     exportBracket(userName, state);
   };
 
-  const handleAiAutoFill = async () => {
+  const handleAiAutoFill = async (upToRound: Round | "all" = "all") => {
     try {
       setAiLoading(true);
-      const data = await fetchFullBracket();
+      const data = await fetchFullBracket(
+        chaosFactor,
+        boostTeam || undefined,
+        boostAmount || undefined,
+        simRuns
+      );
       if (data) {
-        const groups: Record<string, string[]> = {};
-        for (const [groupName, groupData] of Object.entries(data.groups)) {
-          groups[groupName] = groupData.qualifiers;
-        }
+        setState(prev => {
+          const groups: Record<string, string[]> = { ...prev.groups };
+          if (upToRound === "all" || upToRound === "groups" || ["r32", "r16", "r8", "semi", "final"].includes(upToRound)) {
+            for (const [groupName, groupData] of Object.entries(data.groups)) {
+              groups[groupName] = Array.isArray(groupData)
+                ? groupData
+                : (groupData as any).qualifiers || [];
+            }
+          }
 
-        setState({
-          groups,
-          r32: data.r32,
-          r16: data.r16,
-          r8: data.r8,
-          semi: data.semi,
-          final: data.final
+          const newState = {
+            ...prev,
+            groups,
+            r32: (upToRound === "all" || ["r32", "r16", "r8", "semi", "final"].includes(upToRound)) ? data.r32 : prev.r32,
+            r16: (upToRound === "all" || ["r16", "r8", "semi", "final"].includes(upToRound)) ? data.r16 : prev.r16,
+            r8: (upToRound === "all" || ["r8", "semi", "final"].includes(upToRound)) ? data.r8 : prev.r8,
+            semi: (upToRound === "all" || ["semi", "final"].includes(upToRound)) ? data.semi : prev.semi,
+            final: (upToRound === "all" || upToRound === "final") ? data.final : prev.final
+          };
+
+          return cleanDependencies(newState);
         });
       }
     } catch (err) {
@@ -176,6 +194,14 @@ export const useFifaBracket = () => {
     handleManualSave,
     handleExport,
     handleAiAutoFill,
-    getTabUnlockedStatus
+    getTabUnlockedStatus,
+    chaosFactor,
+    setChaosFactor,
+    boostTeam,
+    setBoostTeam,
+    boostAmount,
+    setBoostAmount,
+    simRuns,
+    setSimRuns
   };
 };

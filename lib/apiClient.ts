@@ -35,11 +35,12 @@ export interface GroupPrediction {
 export interface FullBracket {
   groups: Record<
     string,
-    {
-      qualifiers: [string, string];
-      probs: Record<string, number>;
-      match_probs: Record<string, { win_a: number; draw: number; win_b: number }>;
-    }
+    | {
+        qualifiers: [string, string];
+        probs: Record<string, number>;
+        match_probs: Record<string, { win_a: number; draw: number; win_b: number }>;
+      }
+    | string[]
   >;
   r32: string[];
   r16: string[];
@@ -67,12 +68,26 @@ async function get<T>(path: string): Promise<T> {
 }
 
 // ── Public API ────────────────────────────────────────────────────────
+export interface MatchOverrides {
+  elo_a_override?: number;
+  elo_b_override?: number;
+  form_a_override?: number;
+  form_b_override?: number;
+  penalty_a_override?: number;
+  penalty_b_override?: number;
+  big_match_a_override?: number;
+  big_match_b_override?: number;
+  knockout_a_override?: number;
+  knockout_b_override?: number;
+}
+
 export const predictMatch = (
   team_a: string,
   team_b: string,
-  stage: Stage = "group"
+  stage: Stage = "group",
+  overrides?: MatchOverrides
 ): Promise<MatchPrediction> =>
-  post<MatchPrediction>("/predict/match", { team_a, team_b, stage });
+  post<MatchPrediction>("/predict/match", { team_a, team_b, stage, ...overrides });
 
 export const predictGroup = (
   group_name: string,
@@ -80,8 +95,20 @@ export const predictGroup = (
 ): Promise<GroupPrediction> =>
   post<GroupPrediction>("/predict/group", { group_name, teams });
 
-export const fetchFullBracket = (): Promise<FullBracket> =>
-  get<FullBracket>("/predict/bracket/full");
+export const fetchFullBracket = (
+  chaosFactor?: number,
+  boostTeam?: string,
+  boostAmount?: number,
+  simRuns?: number
+): Promise<FullBracket> => {
+  const params = new URLSearchParams();
+  if (chaosFactor !== undefined) params.append("chaos_factor", String(chaosFactor));
+  if (boostTeam) params.append("boost_team", boostTeam);
+  if (boostAmount !== undefined) params.append("boost_amount", String(boostAmount));
+  if (simRuns !== undefined) params.append("sim_runs", String(simRuns));
+  const query = params.toString() ? `?${params.toString()}` : "";
+  return get<FullBracket>(`/predict/bracket/full${query}`);
+};
 
 export interface TeamPathPrediction {
   team: string;

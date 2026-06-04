@@ -3,7 +3,7 @@ export interface GroupData {
   teams: string[];
 }
 
-export const TEAM_FLAGS: Record<string, string> = {
+const TEAM_FLAGS_RAW: Record<string, string> = {
   // Group A
   "Mexico": "🇲🇽",
   "South Africa": "🇿🇦",
@@ -136,4 +136,10 @@ export const TEAM_STATS: Record<string, TeamStats> = {
   "Curaçao": { elo: 1250, overall: 67.0, valueM: 15 },
   "Haiti": { elo: 1200, overall: 67.0, valueM: 15 }
 };
+
+export const TEAM_FLAGS: Record<string, string> = Object.keys(TEAM_FLAGS_RAW).reduce((acc, key) => {
+  acc[key] = "";
+  return acc;
+}, {} as Record<string, string>);
+
 

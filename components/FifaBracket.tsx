@@ -18,7 +18,7 @@ const NAVIGATION_TABS: { id: Round | "summary" | "ai_lab"; label: string }[] = [
   { id: "semi", label: "Semifinals" },
   { id: "final", label: "Final" },
   { id: "summary", label: "Summary" },
-  { id: "ai_lab", label: "✨ AI Lab" },
+  { id: "ai_lab", label: "AI Lab" },
 ];
 
 export const FifaBracket: React.FC = () => {
@@ -39,20 +39,64 @@ export const FifaBracket: React.FC = () => {
     handleExport,
     handleAiAutoFill,
     getTabUnlockedStatus,
+    chaosFactor,
+    setChaosFactor,
+    boostTeam,
+    setBoostTeam,
+    boostAmount,
+    setBoostAmount,
+    simRuns,
+    setSimRuns,
   } = useFifaBracket();
+
+  const currentTabIndex = NAVIGATION_TABS.findIndex((t) => t.id === activeTab);
+  const handlePrevTab = () => {
+    if (currentTabIndex > 0) {
+      const prevTab = NAVIGATION_TABS[currentTabIndex - 1];
+      if (getTabUnlockedStatus(prevTab.id)) {
+        setActiveTab(prevTab.id);
+      }
+    }
+  };
+  const handleNextTab = () => {
+    if (currentTabIndex < NAVIGATION_TABS.length - 1) {
+      const nextTab = NAVIGATION_TABS[currentTabIndex + 1];
+      if (getTabUnlockedStatus(nextTab.id)) {
+        setActiveTab(nextTab.id);
+      }
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-6 text-slate-800 dark:text-slate-100">
+      {/* Centered Big Title */}
+      <div className="text-center py-8">
+        <h1 className="text-4xl sm:text-6xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-green-500 to-teal-500 bg-clip-text text-transparent uppercase">
+          FIFA 2026 World Cup Bracket
+        </h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium tracking-wide">
+          ML-Powered Interactive Tournament Prediction Engine
+        </p>
+      </div>
+
       <BracketHeader
         completedRoundsCount={completedRoundsCount}
         aiLoading={aiLoading}
         onAiAutoFill={handleAiAutoFill}
         onSave={handleManualSave}
         onReset={handleReset}
+        chaosFactor={chaosFactor}
+        setChaosFactor={setChaosFactor}
+        boostTeam={boostTeam}
+        setBoostTeam={setBoostTeam}
+        boostAmount={boostAmount}
+        setBoostAmount={setBoostAmount}
+        simRuns={simRuns}
+        setSimRuns={setSimRuns}
       />
 
       {saveStatus && (
-        <div className="bg-green-100 dark:bg-green-950 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-300 px-4 py-2.5 rounded-xl text-sm font-medium text-center animate-pulse">
+        <div className="bg-green-100 dark:bg-green-950 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-300 px-4 py-2.5 text-sm font-medium text-center animate-pulse rounded-none">
           {saveStatus}
         </div>
       )}
@@ -69,7 +113,7 @@ export const FifaBracket: React.FC = () => {
                 key={tab.id}
                 disabled={!isUnlocked}
                 onClick={() => setActiveTab(tab.id)}
-                className={`py-2 px-4 rounded-lg font-medium text-sm transition-all duration-150 ${
+                className={`py-2 px-4 rounded-none font-medium text-sm transition-all duration-150 ${
                   isActive
                     ? "bg-green-600 text-white"
                     : isUnlocked
@@ -130,6 +174,24 @@ export const FifaBracket: React.FC = () => {
 
         {activeTab === "ai_lab" && <AiLab />}
       </main>
+
+      {/* Back and Next navigation buttons */}
+      <div className="flex justify-between items-center mt-8 pt-6 border-t border-slate-200 dark:border-slate-800">
+        <button
+          onClick={handlePrevTab}
+          disabled={currentTabIndex === 0}
+          className="bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-6 rounded-none text-sm transition duration-150 cursor-pointer"
+        >
+          Back
+        </button>
+        <button
+          onClick={handleNextTab}
+          disabled={currentTabIndex === NAVIGATION_TABS.length - 1 || !getTabUnlockedStatus(NAVIGATION_TABS[currentTabIndex + 1]?.id)}
+          className="bg-green-600 hover:bg-green-700 disabled:opacity-30 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-6 rounded-none text-sm transition duration-150 cursor-pointer"
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };
@@ -141,7 +203,7 @@ const ExportPanel: React.FC<{
   onNameChange: (name: string) => void;
   onExport: () => void;
 }> = ({ userName, onNameChange, onExport }) => (
-  <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl max-w-xl">
+  <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-none max-w-xl">
     <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2">
       Export Predictions
     </h3>
@@ -154,11 +216,11 @@ const ExportPanel: React.FC<{
         placeholder="Enter your name"
         value={userName}
         onChange={(e) => onNameChange(e.target.value)}
-        className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 text-sm flex-1 focus:ring-2 focus:ring-green-500 focus:outline-none"
+        className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-none px-4 py-2.5 text-sm flex-1 focus:ring-2 focus:ring-green-500 focus:outline-none"
       />
       <button
         onClick={onExport}
-        className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-5 rounded-xl text-sm transition duration-150"
+        className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-5 rounded-none text-sm transition duration-150"
       >
         Export to JSON
       </button>
