@@ -1,3 +1,0 @@
-module.exports=[33290,a=>{"use strict";var b=a.i(7997);a.s(["default",0,function({children:a}){return(0,b.jsx)("html",{lang:"en",className:"scroll-smooth",suppressHydrationWarning:!0,children:(0,b.jsx)("body",{className:"min-h-screen bg-slate-100 dark:bg-slate-950 antialiased",children:a})})},"metadata",0,{title:"FIFA World Cup 2026 Bracket",description:"Interactive prediction bracket for the FIFA World Cup 2026. Pick your teams through every round — from Groups to the Champion."}])},70864,a=>{a.n(a.i(33290))}];
-
-//# sourceMappingURL=app_layout_tsx_2144vk_._.js.map
