@@ -65,7 +65,7 @@ export const BracketHeader: React.FC<BracketHeaderProps> = ({
   return (
     <div className="bg-white dark:bg-neutral-900/95 text-neutral-900 dark:text-white border border-neutral-200 dark:border-neutral-800 shadow-xl overflow-hidden transition-colors duration-300">
       {/* ── Main Controls Bar ── */}
-      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 px-5 py-4">
+      <div className="flex flex-col xl:flex-row justify-between items-stretch xl:items-center gap-4 px-5 py-4">
 
         <ProgressBar
           completedRoundsCount={completedRoundsCount}
@@ -73,14 +73,14 @@ export const BracketHeader: React.FC<BracketHeaderProps> = ({
         />
 
         {/* Right: Action Controls */}
-        <div className="flex flex-wrap items-center gap-2 w-full xl:w-auto">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full xl:w-auto">
 
           {/* Round Scope Selector */}
           <select
             value={targetRound}
             onChange={(e) => setTargetRound(e.target.value as Round | "all")}
             disabled={aiLoading}
-            className="bg-neutral-100 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-xs font-semibold px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer text-neutral-700 dark:text-neutral-200 transition-colors hover:border-neutral-400 dark:hover:border-neutral-600"
+            className="bg-neutral-100 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-xs font-semibold px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer text-neutral-700 dark:text-neutral-200 transition-colors hover:border-neutral-400 dark:hover:border-neutral-600 w-full sm:w-auto"
           >
             {ROUND_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value} className="bg-white dark:bg-neutral-900">
@@ -99,7 +99,7 @@ export const BracketHeader: React.FC<BracketHeaderProps> = ({
           <button
             onClick={() => onAiAutoFill(targetRound)}
             disabled={aiLoading}
-            className="relative bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold py-2 px-5 transition-all duration-200 text-xs flex items-center gap-2 cursor-pointer active:scale-95 hover:shadow-lg hover:shadow-emerald-600/25 group overflow-hidden"
+            className="col-span-2 sm:col-span-1 relative bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold py-2.5 px-5 transition-all duration-200 text-xs flex items-center justify-center gap-2 cursor-pointer active:scale-95 hover:shadow-lg hover:shadow-emerald-600/25 group overflow-hidden w-full sm:w-auto"
             title="Simulate Tournament with AI"
           >
             <span className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500 skew-x-12" />
@@ -123,15 +123,17 @@ export const BracketHeader: React.FC<BracketHeaderProps> = ({
 
           <div className="w-px h-8 bg-neutral-200 dark:bg-neutral-700 hidden sm:block" />
 
-          <HeaderActionButtons
-            isDark={isDark}
-            onToggleTheme={onToggleTheme}
-            showSettings={showSettings}
-            hasActiveOverrides={hasActiveOverrides}
-            onToggleSettings={handleToggleSettings}
-            onSave={onSave}
-            onReset={onReset}
-          />
+          <div className="col-span-2 flex items-center justify-between gap-1.5 sm:w-auto mt-2 sm:mt-0">
+            <HeaderActionButtons
+              isDark={isDark}
+              onToggleTheme={onToggleTheme}
+              showSettings={showSettings}
+              hasActiveOverrides={hasActiveOverrides}
+              onToggleSettings={handleToggleSettings}
+              onSave={onSave}
+              onReset={onReset}
+            />
+          </div>
         </div>
       </div>
 

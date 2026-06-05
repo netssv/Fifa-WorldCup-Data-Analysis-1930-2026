@@ -39,25 +39,37 @@ fi
 # ── Función de limpieza al salir ─────────────────────────
 cleanup() {
   echo -e "\n${YELLOW}[DEV] Cerrando servidores...${RESET}"
-  kill "$API_PID" "$NEXT_PID" 2>/dev/null
-  wait "$API_PID" "$NEXT_PID" 2>/dev/null
+  # Kill the process groups of API and NEXT to ensure sub-processes like watchfiles/uvicorn-workers are terminated
+  if [ -n "$API_PID" ]; then
+    kill -TERM -"$API_PID" 2>/dev/null || kill -9 "$API_PID" 2>/dev/null || true
+  fi
+  if [ -n "$NEXT_PID" ]; then
+    kill -TERM -"$NEXT_PID" 2>/dev/null || kill -9 "$NEXT_PID" 2>/dev/null || true
+  fi
+  # Double check port liberation
+  kill -9 $(lsof -t -i:8000 -i:3000) 2>/dev/null || true
   echo -e "${GREEN}[DEV] ¡Hasta luego! 👋${RESET}"
   exit 0
 }
-trap cleanup SIGINT SIGTERM
+trap cleanup SIGINT SIGTERM EXIT
+
+# ── Liberar puertos antes de empezar ──────────────────────
+echo -e "${YELLOW}[DEV] Limpiando procesos previos en puertos 3000 y 8000...${RESET}"
+kill -9 $(lsof -t -i:8000 -i:3000) 2>/dev/null || true
+sleep 1
 
 # ── Iniciar FastAPI ───────────────────────────────────────
-echo -e "\n${BLUE}[API]${RESET}  Iniciando FastAPI en http://localhost:8000 ..."
-$VENV_PYTHON -m uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload \
-  2>&1 | sed "s/^/$(printf '\033[0;34m')[API] $(printf '\033[0m')/" &
+echo -e "\n${BLUE}[API]${RESET}  Iniciando FastAPI en http://0.0.0.0:8000 ..."
+# Run in its own process group using setsid or a subshell so we can kill its children
+(set -m; $VENV_PYTHON -m uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload 2>&1 | sed "s/^/$(printf '\033[0;34m')[API] $(printf '\033[0m')/") &
 API_PID=$!
 
 # ── Esperar un momento para que el API arranque ───────────
-sleep 2
+sleep 2.5
 
 # ── Iniciar Next.js ───────────────────────────────────────
-echo -e "${GREEN}[WEB]${RESET}  Iniciando Next.js en http://localhost:3000 ..."
-npm run dev 2>&1 | sed "s/^/$(printf '\033[0;32m')[WEB] $(printf '\033[0m')/" &
+echo -e "${GREEN}[WEB]${RESET}  Iniciando Next.js en http://0.0.0.0:3000 ..."
+npx next dev --hostname 0.0.0.0 2>&1 | sed "s/^/$(printf '\033[0;32m')[WEB] $(printf '\033[0m')/" &
 NEXT_PID=$!
 
 echo ""

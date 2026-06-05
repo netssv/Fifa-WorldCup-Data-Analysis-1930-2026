@@ -1,27 +1,22 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { GROUPS } from "../lib/bracketData";
 import { Round, getAvailableTeams } from "../lib/bracketLogic";
 import { GroupCard } from "./GroupCard";
 import { RoundColumn } from "./RoundColumn";
-import { BracketSummary } from "./BracketSummary";
+import { BracketSummary, BracketSummaryHandle } from "./BracketSummary";
 import { BracketHeader } from "./BracketHeader";
 import { AiLab } from "./AiLab";
 import { WinProbsPanel } from "./WinProbsPanel";
 import { useFifaBracket } from "../hooks/useFifaBracket";
 import { FifaTitleHeader } from "./FifaTitleHeader";
 import { ExportPanel } from "./ExportPanel";
-
-const NAVIGATION_TABS: { id: Round | "summary" | "ai_lab"; label: string }[] = [
-  { id: "groups", label: "Groups" }, { id: "r32", label: "Round of 32" },
-  { id: "r16", label: "Round of 16" }, { id: "r8", label: "Quarters" },
-  { id: "semi", label: "Semis" }, { id: "final", label: "Final" },
-  { id: "summary", label: "Summary" }, { id: "ai_lab", label: "AI Lab" },
-];
+import { BracketNavigation, NAVIGATION_TABS } from "./BracketNavigation";
 
 export const FifaBracket: React.FC = () => {
   const [isDark, setIsDark] = useState(true);
+  const bracketSummaryRef = useRef<BracketSummaryHandle>(null);
 
   const handleToggleTheme = useCallback(() => {
     const html = document.documentElement;
@@ -97,33 +92,11 @@ export const FifaBracket: React.FC = () => {
       {/* Win probabilities panel */}
       {winProbs && <WinProbsPanel winProbs={winProbs} simRunsTotal={simRunsTotal} />}
 
-      <div className="border-b border-neutral-200 dark:border-neutral-800 overflow-x-auto scrollbar-hide">
-        <nav className="flex whitespace-nowrap" aria-label="Bracket Navigation">
-          {NAVIGATION_TABS.map((tab) => {
-            const isUnlocked = getTabUnlockedStatus(tab.id);
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                disabled={!isUnlocked}
-                onClick={() => setActiveTab(tab.id)}
-                className={`relative group flex items-center gap-1.5 py-3 px-4 sm:px-5 font-semibold text-sm transition-all duration-200 border-b-2 select-none ${
-                  isActive
-                    ? "border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5"
-                    : isUnlocked
-                    ? "border-transparent text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 hover:border-neutral-300 dark:hover:border-neutral-700 cursor-pointer"
-                    : "border-transparent text-neutral-300 dark:text-neutral-700 cursor-not-allowed"
-                }`}
-              >
-                <span>{tab.label}</span>
-                {isActive && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-400 to-green-500 rounded-full" />
-                )}
-              </button>
-            );
-          })}
-        </nav>
-      </div>
+      <BracketNavigation
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        getTabUnlockedStatus={getTabUnlockedStatus}
+      />
 
       {/* ── Tab Panels ── */}
       <main className="mt-2">
@@ -160,8 +133,14 @@ export const FifaBracket: React.FC = () => {
 
         {activeTab === "summary" && (
           <div className="space-y-6">
-            <BracketSummary state={state} />
-            <ExportPanel userName={userName} onNameChange={setUserName} onExport={handleExport} />
+            <BracketSummary ref={bracketSummaryRef} state={state} onPickWinner={handlePlayoffSelect} />
+            <ExportPanel
+              userName={userName}
+              onNameChange={setUserName}
+              onExportJSON={handleExport}
+              onExportPNG={() => bracketSummaryRef.current?.exportPNG()}
+              onExportPDF={() => bracketSummaryRef.current?.exportPDF()}
+            />
           </div>
         )}
 

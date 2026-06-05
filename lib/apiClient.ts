@@ -1,4 +1,23 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const getApiUrl = (): string => {
+  // 1st priority: explicit env var (always use this in production/Vercel)
+  const envUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (envUrl && !envUrl.includes("localhost")) {
+    return envUrl;
+  }
+  // 2nd priority (browser-only): derive from current hostname for local network dev
+  // This lets any device on the LAN reach the API without extra config
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    // If it's a real IP or local domain (not localhost), use port 8000 on same host
+    if (hostname !== "localhost" && hostname !== "127.0.0.1") {
+      return `http://${hostname}:8000`;
+    }
+  }
+  // 3rd priority: localhost fallback
+  return envUrl ?? "http://localhost:8000";
+};
+
+const API_BASE = getApiUrl();
 
 export type Stage = "group" | "r32" | "r16" | "r8" | "semi" | "final";
 

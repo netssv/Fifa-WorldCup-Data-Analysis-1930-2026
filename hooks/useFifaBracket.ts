@@ -5,7 +5,9 @@ import {
   INITIAL_STATE,
   ROUND_LIMITS,
   isRoundComplete,
-  getAvailableTeams
+  getAvailableTeams,
+  cleanDependencies,
+  getTabUnlockedStatus
 } from "../lib/bracketLogic";
 import { saveBracket, loadBracket, exportBracket } from "../lib/bracketStore";
 import { fetchFullBracket } from "../lib/apiClient";
@@ -35,19 +37,6 @@ export const useFifaBracket = () => {
       saveBracket(state);
     }
   }, [state]);
-
-  const cleanDependencies = (newState: BracketState): BracketState => {
-    const cleanState = { ...newState };
-    const groupTeams = Object.values(cleanState.groups).flat();
-    cleanState.r32 = cleanState.r32.filter(t => groupTeams.includes(t));
-    cleanState.r16 = cleanState.r16.filter(t => cleanState.r32.includes(t));
-    cleanState.r8 = cleanState.r8.filter(t => cleanState.r16.includes(t));
-    cleanState.semi = cleanState.semi.filter(t => cleanState.r8.includes(t));
-    if (cleanState.final && !cleanState.semi.includes(cleanState.final)) {
-      cleanState.final = "";
-    }
-    return cleanState;
-  };
 
   const handleGroupSelect = (groupName: string, teamName: string) => {
     setState(prev => {
@@ -135,7 +124,6 @@ export const useFifaBracket = () => {
         simRuns
       );
       if (data) {
-        // Store win probabilities from multi-run simulation
         if (data.win_probabilities && Object.keys(data.win_probabilities).length > 0) {
           setWinProbs(data.win_probabilities);
           setSimRunsTotal(simRuns);
@@ -172,16 +160,8 @@ export const useFifaBracket = () => {
     }
   };
 
-  const getTabUnlockedStatus = (tabId: Round | "summary" | "ai_lab"): boolean => {
-    if (tabId === "groups") return true;
-    if (tabId === "r32") return isRoundComplete(state, "groups");
-    if (tabId === "r16") return isRoundComplete(state, "r32") && getTabUnlockedStatus("r32");
-    if (tabId === "r8") return isRoundComplete(state, "r16") && getTabUnlockedStatus("r16");
-    if (tabId === "semi") return isRoundComplete(state, "r8") && getTabUnlockedStatus("r8");
-    if (tabId === "final") return isRoundComplete(state, "semi") && getTabUnlockedStatus("semi");
-    if (tabId === "summary") return true;
-    if (tabId === "ai_lab") return true;
-    return false;
+  const checkTabUnlocked = (tabId: Round | "summary" | "ai_lab"): boolean => {
+    return getTabUnlockedStatus(state, tabId);
   };
 
   const roundKeys: Round[] = ["groups", "r32", "r16", "r8", "semi", "final"];
@@ -203,7 +183,7 @@ export const useFifaBracket = () => {
     handleManualSave,
     handleExport,
     handleAiAutoFill,
-    getTabUnlockedStatus,
+    getTabUnlockedStatus: checkTabUnlocked,
     chaosFactor,
     setChaosFactor,
     boostTeam,

@@ -96,3 +96,35 @@ export function calculateMaxPoints(state: BracketState): number {
   
   return points;
 }
+
+export function cleanDependencies(state: BracketState): BracketState {
+  const cleanState = { ...state };
+  const groupTeams = Object.values(cleanState.groups).flat();
+  cleanState.r32 = cleanState.r32.filter(t => groupTeams.includes(t));
+  cleanState.r16 = cleanState.r16.filter(t => cleanState.r32.includes(t));
+  cleanState.r8 = cleanState.r8.filter(t => cleanState.r16.includes(t));
+  cleanState.semi = cleanState.semi.filter(t => cleanState.r8.includes(t));
+  if (cleanState.final && !cleanState.semi.includes(cleanState.final)) {
+    cleanState.final = "";
+  }
+  return cleanState;
+}
+
+export function getTabUnlockedStatus(state: BracketState, tabId: Round | "summary" | "ai_lab"): boolean {
+  if (tabId === "groups") return true;
+  if (tabId === "r32") return isRoundComplete(state, "groups");
+  if (tabId === "r16") return isRoundComplete(state, "r32") && getTabUnlockedStatus(state, "r32");
+  if (tabId === "r8") return isRoundComplete(state, "r16") && getTabUnlockedStatus(state, "r16");
+  if (tabId === "semi") return isRoundComplete(state, "r8") && getTabUnlockedStatus(state, "r8");
+  if (tabId === "final") return isRoundComplete(state, "semi") && getTabUnlockedStatus(state, "semi");
+  if (tabId === "summary" || tabId === "ai_lab") return true;
+  return false;
+}
+
+export function padArray(arr: string[], len: number): string[] {
+  const padded = [...arr];
+  while (padded.length < len) padded.push("");
+  return padded;
+}
+
+

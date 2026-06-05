@@ -17,16 +17,29 @@ from .bracket_sim import simulate_full_bracket
 from .team_path import compute_team_path
 from .schemas import MatchRequest, GroupRequest, TeamPathRequest
 
+import os
+
 app = FastAPI(
     title="FIFA 2026 Prediction API",
     description="ML-powered match and bracket predictions for FIFA World Cup 2026",
     version="1.0.0",
 )
 
+# ── CORS Configuration ────────────────────────────────────────────────
+# In production (Vercel/cloud): set ALLOWED_ORIGINS env var to comma-separated list
+#   e.g. ALLOWED_ORIGINS=https://your-app.vercel.app,https://custom-domain.com
+# In local dev: defaults to allow all origins so any device on the LAN works
+_env_origins = os.environ.get("ALLOWED_ORIGINS", "")
+_allowed_origins: list[str] | str = (
+    [o.strip() for o in _env_origins.split(",") if o.strip()]
+    if _env_origins
+    else ["*"]
+)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001", "https://*.vercel.app"],
-    allow_credentials=True,
+    allow_origins=_allowed_origins,
+    allow_credentials=_env_origins != "",  # credentials only when origins are specific
     allow_methods=["*"],
     allow_headers=["*"],
 )

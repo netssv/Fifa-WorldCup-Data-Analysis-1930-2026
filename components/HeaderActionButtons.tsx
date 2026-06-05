@@ -35,19 +35,19 @@ export const HeaderActionButtons: React.FC<HeaderActionButtonsProps> = ({
   onSave,
   onReset,
 }) => (
-  <>
+  <div className="grid grid-cols-4 gap-2 w-full">
     {/* Advanced Settings Toggle */}
     <button
       onClick={onToggleSettings}
-      className={`p-2 border transition-all duration-200 cursor-pointer relative group ${
+      className={`py-2 px-3 border transition-all duration-200 cursor-pointer relative group flex items-center justify-center rounded-sm ${
         showSettings || hasActiveOverrides
           ? "bg-violet-600/20 border-violet-500/50 text-violet-400 hover:bg-violet-600/30"
-          : "bg-neutral-100 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-700 text-neutral-500 hover:text-violet-400 hover:border-violet-500/50"
+          : "bg-neutral-150 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-700 text-neutral-500 hover:text-violet-400 hover:border-violet-500/50"
       }`}
       title="Advanced Simulation Settings"
     >
       <svg
-        className={`h-4 w-4 transition-transform duration-300 ${showSettings ? "rotate-45" : "group-hover:rotate-12"}`}
+        className={`h-4.5 w-4.5 transition-transform duration-300 ${showSettings ? "rotate-45" : "group-hover:rotate-12"}`}
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -60,14 +60,14 @@ export const HeaderActionButtons: React.FC<HeaderActionButtonsProps> = ({
         />
       </svg>
       {hasActiveOverrides && !showSettings && (
-        <span className="absolute -top-1 -right-1 h-2.5 w-2.5 bg-amber-400 rounded-full border-2 border-white dark:border-neutral-900" />
+        <span className="absolute top-1 right-1 h-2.5 w-2.5 bg-amber-400 rounded-full border-2 border-white dark:border-neutral-900" />
       )}
     </button>
 
     {/* Theme Toggle */}
     <button
       onClick={onToggleTheme}
-      className="p-2 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 hover:border-neutral-400 dark:hover:border-neutral-600 text-neutral-650 dark:text-neutral-300 transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95 flex items-center justify-center"
+      className="py-2 px-3 border border-neutral-300 dark:border-neutral-700 bg-neutral-150 dark:bg-neutral-800 hover:border-neutral-400 dark:hover:border-neutral-600 text-neutral-650 dark:text-neutral-300 transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95 flex items-center justify-center rounded-sm"
       title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
     >
       <ThemeToggleIcon isDark={isDark} />
@@ -76,7 +76,7 @@ export const HeaderActionButtons: React.FC<HeaderActionButtonsProps> = ({
     {/* Save Button */}
     <button
       onClick={onSave}
-      className="bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-4 transition-all duration-150 text-xs cursor-pointer active:scale-95 hover:shadow-md hover:shadow-green-600/20"
+      className="bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-3 transition-all duration-150 text-xs cursor-pointer active:scale-95 hover:shadow-md hover:shadow-green-600/20 flex items-center justify-center rounded-sm"
     >
       Save
     </button>
@@ -84,9 +84,9 @@ export const HeaderActionButtons: React.FC<HeaderActionButtonsProps> = ({
     {/* Reset Button */}
     <button
       onClick={onReset}
-      className="bg-transparent hover:bg-red-500/10 text-red-400 hover:text-red-300 font-bold py-2 px-3 border border-red-500/20 hover:border-red-500/40 transition-all duration-150 text-xs cursor-pointer active:scale-95"
+      className="bg-transparent hover:bg-red-500/10 text-red-400 hover:text-red-300 font-bold py-2 px-3 border border-red-500/20 hover:border-red-500/40 transition-all duration-150 text-xs cursor-pointer active:scale-95 flex items-center justify-center rounded-sm"
     >
       Reset
     </button>
-  </>
+  </div>
 );
