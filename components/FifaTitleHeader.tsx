@@ -1,5 +1,75 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
+
+// June 11, 2026 — Opening kickoff at Estadio Azteca (UTC-5 = 23:00 UTC)
+const WORLD_CUP_KICKOFF = new Date("2026-06-11T23:00:00Z");
+
+interface TimeLeft {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+  started: boolean;
+}
+
+function calculateTimeLeft(): TimeLeft {
+  const diff = WORLD_CUP_KICKOFF.getTime() - Date.now();
+  if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, started: true };
+  return {
+    days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+    minutes: Math.floor((diff / (1000 * 60)) % 60),
+    seconds: Math.floor((diff / 1000) % 60),
+    started: false,
+  };
+}
+
+/** Single countdown unit block */
+const TimeUnit: React.FC<{ value: number; label: string }> = ({ value, label }) => (
+  <div className="flex flex-col items-center gap-0.5">
+    <span className="text-lg sm:text-2xl font-black tabular-nums text-emerald-400 leading-none">
+      {String(value).padStart(2, "0")}
+    </span>
+    <span className="text-[9px] uppercase tracking-widest text-neutral-500 dark:text-neutral-600 font-bold">
+      {label}
+    </span>
+  </div>
+);
+
+/** Countdown timer to the opening kickoff */
+const CountdownTimer: React.FC = () => {
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft);
+
+  useEffect(() => {
+    const timer = setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  if (timeLeft.started) {
+    return (
+      <p className="mt-3 text-xs font-bold uppercase tracking-widest text-emerald-500 animate-pulse">
+        The tournament has begun!
+      </p>
+    );
+  }
+
+  return (
+    <div className="mt-4 flex flex-col items-center gap-2">
+      <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-600 font-bold">
+        Kickoff in
+      </p>
+      <div className="flex items-end gap-3">
+        <TimeUnit value={timeLeft.days} label="Days" />
+        <span className="text-emerald-500/60 font-black text-xl mb-1.5">:</span>
+        <TimeUnit value={timeLeft.hours} label="Hrs" />
+        <span className="text-emerald-500/60 font-black text-xl mb-1.5">:</span>
+        <TimeUnit value={timeLeft.minutes} label="Min" />
+        <span className="text-emerald-500/60 font-black text-xl mb-1.5">:</span>
+        <TimeUnit value={timeLeft.seconds} label="Sec" />
+      </div>
+    </div>
+  );
+};
 
 /** Pulsing dot that orbits the center */
 const OrbitDot: React.FC<{ delay: string }> = ({ delay }) => (
@@ -12,16 +82,10 @@ const OrbitDot: React.FC<{ delay: string }> = ({ delay }) => (
 /** Floating trophy with soft diffused glow and centered orbiting particles */
 const FloatingTrophy: React.FC = () => (
   <div className="relative flex justify-center mb-6">
-    {/* Inner wrapper containing trophy, halo, and orbits floating in unison */}
     <div className="relative w-28 h-28 flex items-center justify-center animate-float">
-      {/* Soft diffused halo glow */}
       <span className="absolute w-20 h-20 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 blur-md border border-emerald-500/10 z-0" />
-
-      {/* Orbiting particles */}
       <OrbitDot delay="0s" />
       <OrbitDot delay="-3s" />
-
-      {/* Trophy icon */}
       <svg
         className="w-12 h-12 text-amber-400 relative z-10 drop-shadow-[0_0_12px_rgba(245,158,11,0.3)]"
         viewBox="0 0 24 24"
@@ -36,7 +100,6 @@ const FloatingTrophy: React.FC = () => (
 /** Animated shimmer sweep on the "WORLD CUP" text */
 const ShimmerTitle: React.FC = () => (
   <h1 className="relative font-black uppercase tracking-[0.15em] leading-none select-none">
-    {/* Row 1: FIFA — colored + World Cup adaptive */}
     <span className="block text-3xl sm:text-5xl md:text-6xl">
       <span className="text-emerald-500 dark:text-emerald-400">FIFA</span>
       {" "}
@@ -53,8 +116,6 @@ const ShimmerTitle: React.FC = () => (
         WORLD CUP
       </span>
     </span>
-
-    {/* Row 2: 2026 (gold shimmer) + AI Predictor */}
     <span className="block text-2xl sm:text-4xl md:text-5xl mt-1">
       <span
         className="animate-text-shimmer"
@@ -104,7 +165,7 @@ const HostBadges: React.FC = () => (
 
 export const FifaTitleHeader: React.FC = () => (
   <div className="relative text-center py-10 overflow-hidden">
-    {/* Soft radial glow — blends with any background, no visible box */}
+    {/* Soft radial glow */}
     <div
       className="absolute inset-0 pointer-events-none"
       style={{
@@ -112,9 +173,10 @@ export const FifaTitleHeader: React.FC = () => (
           "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(16,185,129,0.07) 0%, transparent 100%)",
       }}
     />
-
     <FloatingTrophy />
     <ShimmerTitle />
     <HostBadges />
+    <CountdownTimer />
   </div>
 );
+
