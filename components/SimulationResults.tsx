@@ -65,16 +65,28 @@ export const SimulationResults: React.FC<SimulationResultsProps> = ({
         </div>
 
         <div className="mt-8 pt-4 border-t border-neutral-100 dark:border-neutral-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-          <span className="text-sm text-neutral-500 dark:text-neutral-400">
-            Predicted Outcome:
-          </span>
+          <div className="flex flex-col">
+            <span className="text-sm text-neutral-500 dark:text-neutral-400">
+              Predicted Outcome:
+            </span>
+            {result.goals_a !== undefined && result.goals_b !== undefined && (
+              <span className="text-xs font-mono text-emerald-500 font-bold mt-0.5">
+                Expected Goals: {result.goals_a.toFixed(2)} - {result.goals_b.toFixed(2)}
+              </span>
+            )}
+          </div>
           <div className="flex items-center gap-2.5 font-bold text-neutral-850 dark:text-white bg-neutral-50 dark:bg-neutral-950 px-4 py-2.5 rounded-none border border-neutral-200/60 dark:border-neutral-800">
             <span className="text-xl">
               {TEAM_FLAGS[result.predicted_winner] ? (
                 <img src={TEAM_FLAGS[result.predicted_winner]} alt={result.predicted_winner} className="w-8 h-5 object-cover inline-block shadow-sm" />
-              ) : "🏳️"}
+              ) : null}
             </span>
-            <span>{result.predicted_winner} advances/wins</span>
+            <span>
+              {result.predicted_winner} wins
+              {result.goals_a !== undefined && result.goals_b !== undefined && (
+                ` by ${Math.abs(result.goals_a - result.goals_b).toFixed(1)} goals (expected)`
+              )}
+            </span>
           </div>
         </div>
       </div>

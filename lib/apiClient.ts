@@ -12,6 +12,8 @@ export interface MatchPrediction {
   predicted_winner: string;
   confidence: "high" | "medium" | "low";
   confidence_score: number;
+  goals_a?: number;
+  goals_b?: number;
   model_features: {
     elo_diff: number;
     team_a_form: number;

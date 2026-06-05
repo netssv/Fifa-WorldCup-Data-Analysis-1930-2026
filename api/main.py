@@ -67,6 +67,7 @@ async def predict_match(req: MatchRequest):
         "team_a_win_prob": round(p_a, 4), "draw_prob": round(p_draw, 4), "team_b_win_prob": round(p_b, 4),
         "predicted_winner": winner,
         "confidence": _confidence_label(max_prob), "confidence_score": round(max_prob, 4),
+        "goals_a": round(goals_a, 2), "goals_b": round(goals_b, 2),
         "model_features": {
             "elo_diff": round(elo_a - elo_b),
             "team_a_form": round(req.form_a_override if req.form_a_override is not None else _get_form(team_a), 2),

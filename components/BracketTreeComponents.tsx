@@ -18,7 +18,7 @@ export const TeamSlot: React.FC<TeamSlotProps> = ({ team, isWinner }) => {
     }`}>
       <div className="w-5 h-3.5 flex-shrink-0">
         {flag
-          ? <img src={flag} alt={team} className="w-5 h-3.5 object-cover rounded-sm shadow-sm" />
+          ? <img src={flag} alt={team} crossOrigin="anonymous" className="w-5 h-3.5 object-cover rounded-sm shadow-sm" />
           : <div className="w-5 h-3.5 bg-neutral-200 dark:bg-neutral-800 rounded-sm" />
         }
       </div>
@@ -58,7 +58,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ team1, team2, winner }) =>
 // ── Connector (SVG-based, theme-aware) ────────────────────────────────
 export const Connector: React.FC = () => (
   <div className="flex items-center self-stretch flex-shrink-0 w-8">
-    <div className="w-full border-t-2 border-dashed border-neutral-300 dark:border-neutral-600" />
+    <div className="w-full border-t-2 border-dashed border-emerald-500/50 dark:border-emerald-400/50" />
   </div>
 );
 
@@ -111,7 +111,7 @@ export const CenterTrophy: React.FC<CenterTrophyProps> = ({ semi, finalWinner })
     <div className="bg-gradient-to-br from-yellow-400 to-amber-500 p-[2px] rounded-lg shadow-2xl shadow-yellow-500/20">
       <div className="bg-white dark:bg-neutral-955 px-5 py-3 rounded-[7px] flex items-center gap-3 min-w-[140px] justify-center">
         {finalWinner && TEAM_FLAGS[finalWinner]
-          ? <img src={TEAM_FLAGS[finalWinner]} alt={finalWinner} className="w-9 h-6 object-cover rounded-sm shadow-sm" />
+          ? <img src={TEAM_FLAGS[finalWinner]} alt={finalWinner} crossOrigin="anonymous" className="w-9 h-6 object-cover rounded-sm shadow-sm" />
           : <div className="w-9 h-6 bg-neutral-200 dark:bg-neutral-700 rounded-sm" />
         }
         <span className="font-black text-base sm:text-lg text-neutral-900 dark:text-white tracking-wide truncate max-w-[110px]">
@@ -130,7 +130,7 @@ export const CenterTrophy: React.FC<CenterTrophyProps> = ({ semi, finalWinner })
           <React.Fragment key={idx}>
             {idx === 1 && <div className="text-center text-[10px] text-neutral-400 dark:text-neutral-600 font-bold my-1.5">VS</div>}
             <div className={`flex items-center gap-2 p-2 rounded ${isChamp ? "bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700/40" : "bg-neutral-50 dark:bg-neutral-800"}`}>
-              {flag ? <img src={flag} alt={team} className="w-6 h-4 object-cover rounded-sm" /> : <div className="w-6 h-4 bg-neutral-200 dark:bg-neutral-700 rounded-sm" />}
+              {flag ? <img src={flag} alt={team} crossOrigin="anonymous" className="w-6 h-4 object-cover rounded-sm" /> : <div className="w-6 h-4 bg-neutral-200 dark:bg-neutral-700 rounded-sm" />}
               <span className={`text-xs font-semibold truncate ${isChamp ? "text-yellow-700 dark:text-yellow-300" : "text-neutral-700 dark:text-neutral-300"}`}>
                 {team || "TBD"}
               </span>
