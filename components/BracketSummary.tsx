@@ -151,7 +151,7 @@ export const BracketSummary = forwardRef<BracketSummaryHandle, BracketSummaryPro
                     {renderMatchesRow(leftR8, leftSemi, 1, "semi")}
                     <VerticalConnector />
                     <div className="text-[9px] font-black uppercase tracking-wider text-neutral-400">Semifinal</div>
-                    <MatchCard team1={leftSemi[0] || ""} team2="" winner={semi.find((a) => a === leftSemi[0]) || ""} onPickWinner={onPickWinner ? (t) => onPickWinner("final", t) : undefined} />
+                    <MatchCard team1={leftSemi[0] || ""} team2={rightSemi[0] || ""} winner={semi.find((a) => a === leftSemi[0] || a === rightSemi[0]) || ""} onPickWinner={onPickWinner ? (t) => onPickWinner("final", t) : undefined} />
                   </div>
 
                   {/* Center Trophy / Champion / Grand Final */}
@@ -164,7 +164,7 @@ export const BracketSummary = forwardRef<BracketSummaryHandle, BracketSummaryPro
                   {/* Bottom Half (flows bottom-to-top) */}
                   <div className="w-full flex flex-col items-center gap-3">
                     <div className="text-[9px] font-black uppercase tracking-wider text-neutral-400">Semifinal</div>
-                    <MatchCard team1={rightSemi[0] || ""} team2="" winner={semi.find((a) => a === rightSemi[0]) || ""} onPickWinner={onPickWinner ? (t) => onPickWinner("final", t) : undefined} />
+                    <MatchCard team1={rightSemi[0] || ""} team2={leftSemi[0] || ""} winner={semi.find((a) => a === rightSemi[0] || a === leftSemi[0]) || ""} onPickWinner={onPickWinner ? (t) => onPickWinner("final", t) : undefined} />
                     <VerticalConnector />
                     <div className="text-[9px] font-black uppercase tracking-wider text-neutral-400">Quarterfinals</div>
                     {renderMatchesRow(rightR8, rightSemi, 1, "semi")}
