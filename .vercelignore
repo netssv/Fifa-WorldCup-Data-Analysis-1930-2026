@@ -1,0 +1,12 @@
+# Evitar que Vercel intente compilar/empaquetar la API de Python
+requirements.txt
+nixpacks.toml
+api/
+src/
+Data/
+Predictions and Models Folder/
+*.ipynb
+*.py
+*.csv
+.venv/
+.env.local
