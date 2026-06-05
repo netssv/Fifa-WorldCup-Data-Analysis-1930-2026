@@ -37,10 +37,10 @@ export const GroupCard: React.FC<GroupCardProps> = ({
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-none p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
+    <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-none p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          <span className="text-sm font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
             {groupName}
           </span>
           {onSetQualifiers && (
@@ -61,7 +61,7 @@ export const GroupCard: React.FC<GroupCardProps> = ({
             </button>
           )}
         </div>
-        <span className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs px-2.5 py-1 font-medium">
+        <span className="bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-xs px-2.5 py-1 font-medium">
           {selectedTeams.length} / 2 selected
         </span>
       </div>
@@ -81,8 +81,8 @@ export const GroupCard: React.FC<GroupCardProps> = ({
                 selected
                   ? "bg-green-600 border-green-600 text-white shadow-sm"
                   : disabled
-                  ? "bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-850 text-slate-300 dark:text-slate-700 cursor-not-allowed hover:scale-100"
-                  : "bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-850 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  ? "bg-neutral-50 dark:bg-neutral-950 border-neutral-200 dark:border-neutral-850 text-neutral-300 dark:text-neutral-700 cursor-not-allowed hover:scale-100"
+                  : "bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-850 text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800"
               }`}
             >
               <span className="flex items-center gap-3">

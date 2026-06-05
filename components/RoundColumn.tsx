@@ -28,13 +28,13 @@ export const RoundColumn: React.FC<RoundColumnProps> = ({
   const reachedLimit = selections.length >= limit;
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-none p-6 shadow-sm">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 mb-6 pb-4 border-b border-gray-100 dark:border-slate-800">
+    <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-none p-6 shadow-sm">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 mb-6 pb-4 border-b border-gray-100 dark:border-neutral-800">
         <div>
-          <h2 className="text-xl font-bold text-slate-800 dark:text-white">
+          <h2 className="text-xl font-bold text-neutral-800 dark:text-white">
             {roundTitle}
           </h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">
             Select the teams advancing to the next stage.
           </p>
         </div>
@@ -56,8 +56,8 @@ export const RoundColumn: React.FC<RoundColumnProps> = ({
                 selected
                   ? "bg-green-600 border-green-600 text-white shadow-sm shadow-green-600/20"
                   : disabled
-                  ? "bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-850 text-slate-300 dark:text-slate-700 cursor-not-allowed hover:scale-100"
-                  : "bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-850 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  ? "bg-neutral-50 dark:bg-neutral-950 border-neutral-200 dark:border-neutral-850 text-neutral-300 dark:text-neutral-700 cursor-not-allowed hover:scale-100"
+                  : "bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-850 text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800"
               }`}
             >
               <span className="flex items-center gap-2.5 overflow-hidden">
@@ -84,8 +84,8 @@ export const RoundColumn: React.FC<RoundColumnProps> = ({
       </div>
       
       {previousRoundTeams.length === 0 && (
-        <div className="text-center py-10 border-2 border-dashed border-gray-200 dark:border-slate-850 rounded-none">
-          <p className="text-slate-400 dark:text-slate-600 text-sm">
+        <div className="text-center py-10 border-2 border-dashed border-gray-200 dark:border-neutral-850 rounded-none">
+          <p className="text-neutral-400 dark:text-neutral-600 text-sm">
             Please complete selections in the previous round to unlock this stage.
           </p>
         </div>

@@ -15,7 +15,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className="min-h-screen bg-slate-100 dark:bg-slate-950 antialiased"
+        className="min-h-screen bg-neutral-100 dark:bg-neutral-950 antialiased"
         suppressHydrationWarning
       >
         {children}

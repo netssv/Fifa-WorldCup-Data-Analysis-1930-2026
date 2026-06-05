@@ -71,14 +71,14 @@ export const FifaBracket: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-6 text-slate-800 dark:text-slate-100">
+    <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-6 text-neutral-800 dark:text-neutral-100">
       {/* Centered Big Title */}
       <div className="text-center py-8">
-        <h1 className="text-4xl sm:text-6xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-green-500 to-teal-500 bg-clip-text text-transparent uppercase">
+        <h1 className="text-4xl sm:text-6xl font-black tracking-tight bg-gradient-to-r from-[#00ff85] via-[#00f0ff] to-[#ff00a0] bg-clip-text text-transparent uppercase font-sans">
           FIFA 2026 World Cup Bracket
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium tracking-wide">
-          ML-Powered Interactive Tournament Prediction Engine
+        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2 font-semibold tracking-wide uppercase">
+          Official Simulation & Interactive Predictor
         </p>
       </div>
 
@@ -110,7 +110,7 @@ export const FifaBracket: React.FC = () => {
       )}
 
       {/* Navigation Tabs */}
-      <div className="border-b border-gray-200 dark:border-slate-800 overflow-x-auto flex whitespace-nowrap scrollbar-hide">
+      <div className="border-b border-gray-200 dark:border-neutral-800 overflow-x-auto flex whitespace-nowrap scrollbar-hide">
         <nav className="flex space-x-2 p-1" aria-label="Tabs">
           {NAVIGATION_TABS.map((tab) => {
             const isUnlocked = getTabUnlockedStatus(tab.id);
@@ -125,8 +125,8 @@ export const FifaBracket: React.FC = () => {
                   isActive
                     ? "bg-green-600 text-white"
                     : isUnlocked
-                    ? "text-slate-650 dark:text-slate-350 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
-                    : "text-slate-300 dark:text-slate-700 cursor-not-allowed"
+                    ? "text-neutral-650 dark:text-neutral-350 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer"
+                    : "text-neutral-300 dark:text-neutral-700 cursor-not-allowed"
                 }`}
               >
                 {tab.label}
@@ -184,11 +184,11 @@ export const FifaBracket: React.FC = () => {
       </main>
 
       {/* Back and Next navigation buttons */}
-      <div className="flex justify-between items-center mt-8 pt-6 border-t border-slate-200 dark:border-slate-800">
+      <div className="flex justify-between items-center mt-8 pt-6 border-t border-neutral-200 dark:border-neutral-800">
         <button
           onClick={handlePrevTab}
           disabled={currentTabIndex === 0}
-          className="bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-6 rounded-none text-sm transition duration-150 cursor-pointer"
+          className="bg-neutral-800 hover:bg-neutral-700 disabled:opacity-30 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-6 rounded-none text-sm transition duration-150 cursor-pointer"
         >
           Back
         </button>
@@ -211,11 +211,11 @@ const ExportPanel: React.FC<{
   onNameChange: (name: string) => void;
   onExport: () => void;
 }> = ({ userName, onNameChange, onExport }) => (
-  <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-none max-w-xl">
-    <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2">
+  <div className="bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-none max-w-xl">
+    <h3 className="text-lg font-bold text-neutral-800 dark:text-white mb-2">
       Export Predictions
     </h3>
-    <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+    <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
       Export your predictions bracket as a JSON file to share.
     </p>
     <div className="flex flex-col sm:flex-row gap-3">
@@ -224,7 +224,7 @@ const ExportPanel: React.FC<{
         placeholder="Enter your name"
         value={userName}
         onChange={(e) => onNameChange(e.target.value)}
-        className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-none px-4 py-2.5 text-sm flex-1 focus:ring-2 focus:ring-green-500 focus:outline-none"
+        className="bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-none px-4 py-2.5 text-sm flex-1 focus:ring-2 focus:ring-green-500 focus:outline-none"
       />
       <button
         onClick={onExport}

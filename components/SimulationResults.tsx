@@ -10,7 +10,7 @@ interface SimulationResultsProps {
 const getProbabilityBarColor = (probability: number): string => {
   if (probability > 0.55) return "bg-emerald-500";
   if (probability > 0.40) return "bg-sky-500";
-  return "bg-slate-400 dark:bg-slate-600";
+  return "bg-neutral-400 dark:bg-neutral-600";
 };
 
 const getConfidenceBadgeStyle = (confidence: string): string => {
@@ -18,7 +18,7 @@ const getConfidenceBadgeStyle = (confidence: string): string => {
     return "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-400";
   if (confidence === "medium")
     return "bg-sky-100 text-sky-800 dark:bg-sky-950/50 dark:text-sky-400";
-  return "bg-slate-100 text-slate-800 dark:bg-slate-800/80 dark:text-slate-300";
+  return "bg-neutral-100 text-neutral-800 dark:bg-neutral-800/80 dark:text-neutral-300";
 };
 
 /** Renders probability bars, confidence badge, and predicted winner */
@@ -31,14 +31,14 @@ export const SimulationResults: React.FC<SimulationResultsProps> = ({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
       {/* Probabilities Card */}
-      <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-none p-6 shadow-sm flex flex-col justify-between">
+      <div className="lg:col-span-2 bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-none p-6 shadow-sm flex flex-col justify-between">
         <div>
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-slate-800 dark:text-white">
+            <h3 className="text-lg font-bold text-neutral-800 dark:text-white">
               Simulation Probabilities
             </h3>
             <div className="flex items-center gap-2">
-              <span className="text-xs uppercase tracking-wider font-semibold text-slate-400">
+              <span className="text-xs uppercase tracking-wider font-semibold text-neutral-400">
                 Confidence:
               </span>
               <span className={`text-xs px-2.5 py-1 rounded-none font-bold uppercase ${getConfidenceBadgeStyle(result.confidence)}`}>
@@ -64,11 +64,11 @@ export const SimulationResults: React.FC<SimulationResultsProps> = ({
           </div>
         </div>
 
-        <div className="mt-8 pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-          <span className="text-sm text-slate-500 dark:text-slate-400">
+        <div className="mt-8 pt-4 border-t border-neutral-100 dark:border-neutral-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <span className="text-sm text-neutral-500 dark:text-neutral-400">
             Predicted Outcome:
           </span>
-          <div className="flex items-center gap-2.5 font-bold text-slate-850 dark:text-white bg-slate-50 dark:bg-slate-950 px-4 py-2.5 rounded-none border border-slate-200/60 dark:border-slate-800">
+          <div className="flex items-center gap-2.5 font-bold text-neutral-850 dark:text-white bg-neutral-50 dark:bg-neutral-950 px-4 py-2.5 rounded-none border border-neutral-200/60 dark:border-neutral-800">
             <span className="text-xl">{TEAM_FLAGS[result.predicted_winner]}</span>
             <span>{result.predicted_winner} advances/wins</span>
           </div>
@@ -101,7 +101,7 @@ const ProbabilityBar: React.FC<ProbabilityBarProps> = ({
       <span className="flex items-center gap-2">
         <span className="flex items-center text-lg min-w-[24px]">
           {isNeutral ? (
-            <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <svg className="w-4 h-4 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
             </svg>
           ) : flag}
@@ -110,10 +110,10 @@ const ProbabilityBar: React.FC<ProbabilityBarProps> = ({
       </span>
       <span>{(probability * 100).toFixed(1)}%</span>
     </div>
-    <div className="w-full bg-slate-100 dark:bg-slate-800 h-3 rounded-none overflow-hidden">
+    <div className="w-full bg-neutral-100 dark:bg-neutral-800 h-3 rounded-none overflow-hidden">
       <div
         className={`h-full transition-all duration-500 ${
-          isNeutral ? "bg-slate-400 dark:bg-slate-600" : getProbabilityBarColor(probability)
+          isNeutral ? "bg-neutral-400 dark:bg-neutral-600" : getProbabilityBarColor(probability)
         }`}
         style={{ width: `${probability * 100}%` }}
       />
@@ -126,8 +126,8 @@ const ModelFeaturesCard: React.FC<{ result: MatchPrediction }> = ({ result }) =>
   const eloDiffIsPositive = elo_diff >= 0;
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-none p-6 shadow-sm space-y-5">
-      <h3 className="text-lg font-bold text-slate-800 dark:text-white">
+    <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-none p-6 shadow-sm space-y-5">
+      <h3 className="text-lg font-bold text-neutral-800 dark:text-white">
         Model Feature Details
       </h3>
       <div className="space-y-4">
@@ -175,13 +175,13 @@ const FeatureRow: React.FC<FeatureRowProps> = ({
   title,
   subtitle,
   value,
-  valueStyle = "bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100",
+  valueStyle = "bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-100",
   hasBorder = false,
 }) => (
-  <div className={`flex justify-between items-center py-2.5 ${hasBorder ? "border-b border-slate-100 dark:border-slate-850" : ""}`}>
+  <div className={`flex justify-between items-center py-2.5 ${hasBorder ? "border-b border-neutral-100 dark:border-neutral-850" : ""}`}>
     <div>
-      <span className="text-sm font-bold text-slate-700 dark:text-slate-200 block">{title}</span>
-      <span className="text-xs text-slate-400">{subtitle}</span>
+      <span className="text-sm font-bold text-neutral-700 dark:text-neutral-200 block">{title}</span>
+      <span className="text-xs text-neutral-400">{subtitle}</span>
     </div>
     <span className={`text-sm font-extrabold px-3 py-1 rounded-none ${valueStyle}`}>
       {value}

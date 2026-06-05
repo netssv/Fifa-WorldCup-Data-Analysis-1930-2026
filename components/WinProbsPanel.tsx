@@ -25,14 +25,14 @@ export const WinProbsPanel: React.FC<WinProbsPanelProps> = ({
   const isMultiRun = simRunsTotal > 1;
 
   return (
-    <div className="bg-slate-900 border border-slate-800 overflow-hidden">
+    <div className="bg-neutral-900 border border-neutral-800 overflow-hidden">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+      <div className="px-6 py-4 border-b border-neutral-800 flex items-center justify-between">
         <div>
           <h3 className="text-base font-bold text-white tracking-tight">
             Tournament Simulation Results
           </h3>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-neutral-400 mt-0.5">
             {isMultiRun
               ? `${simRunsTotal} simulations — championship wins per country`
               : "Single simulation — predicted winner"}
@@ -40,14 +40,14 @@ export const WinProbsPanel: React.FC<WinProbsPanelProps> = ({
         </div>
         {isMultiRun && topTeam && (
           <div className="text-right hidden sm:block">
-            <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-500 block">
+            <span className="text-[10px] uppercase tracking-wider font-semibold text-neutral-500 block">
               Most Likely Champion
             </span>
             <span className="text-sm font-extrabold text-emerald-400">
               {TEAM_FLAGS[topTeam] ? `${TEAM_FLAGS[topTeam]} ` : ""}
               {topTeam}
             </span>
-            <span className="text-xs text-slate-400 block">
+            <span className="text-xs text-neutral-400 block">
               {topWins} wins ({(topProb * 100).toFixed(1)}%)
             </span>
           </div>
@@ -58,19 +58,19 @@ export const WinProbsPanel: React.FC<WinProbsPanelProps> = ({
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-slate-800 bg-slate-950/50">
-              <th className="text-left px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+            <tr className="border-b border-neutral-800 bg-neutral-950/50">
+              <th className="text-left px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-500">
                 Rank
               </th>
-              <th className="text-left px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+              <th className="text-left px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-500">
                 Country
               </th>
               {isMultiRun && (
-                <th className="text-right px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                <th className="text-right px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-500">
                   Wins
                 </th>
               )}
-              <th className="text-right px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+              <th className="text-right px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-500">
                 {isMultiRun ? "Win Rate" : "Probability"}
               </th>
               <th className="px-4 py-2.5 w-40 hidden sm:table-cell"></th>
@@ -84,10 +84,10 @@ export const WinProbsPanel: React.FC<WinProbsPanelProps> = ({
               return (
                 <tr
                   key={team}
-                  className={`border-b border-slate-800/50 transition-colors ${
+                  className={`border-b border-neutral-800/50 transition-colors ${
                     isTop
                       ? "bg-emerald-950/25 hover:bg-emerald-950/40"
-                      : "hover:bg-slate-800/30"
+                      : "hover:bg-neutral-800/30"
                   }`}
                 >
                   {/* Rank */}
@@ -97,10 +97,10 @@ export const WinProbsPanel: React.FC<WinProbsPanelProps> = ({
                         idx === 0
                           ? "bg-amber-500/20 text-amber-300"
                           : idx === 1
-                          ? "bg-slate-600/30 text-slate-400"
+                          ? "bg-neutral-600/30 text-neutral-400"
                           : idx === 2
                           ? "bg-orange-900/30 text-orange-400"
-                          : "text-slate-600"
+                          : "text-neutral-600"
                       }`}
                     >
                       {idx + 1}
@@ -117,7 +117,7 @@ export const WinProbsPanel: React.FC<WinProbsPanelProps> = ({
                       )}
                       <span
                         className={`font-semibold ${
-                          isTop ? "text-emerald-300" : "text-slate-200"
+                          isTop ? "text-emerald-300" : "text-neutral-200"
                         }`}
                       >
                         {team}
@@ -128,9 +128,9 @@ export const WinProbsPanel: React.FC<WinProbsPanelProps> = ({
                   {/* Wins count */}
                   {isMultiRun && (
                     <td className="px-4 py-3 text-right">
-                      <span className="text-xs font-mono font-bold text-slate-300">
+                      <span className="text-xs font-mono font-bold text-neutral-300">
                         {wins}
-                        <span className="text-slate-600 font-normal">
+                        <span className="text-neutral-600 font-normal">
                           /{simRunsTotal}
                         </span>
                       </span>
@@ -145,7 +145,7 @@ export const WinProbsPanel: React.FC<WinProbsPanelProps> = ({
                           ? "text-emerald-400"
                           : prob > 0.05
                           ? "text-sky-400"
-                          : "text-slate-400"
+                          : "text-neutral-400"
                       }`}
                     >
                       {pct}%
@@ -154,14 +154,14 @@ export const WinProbsPanel: React.FC<WinProbsPanelProps> = ({
 
                   {/* Progress bar */}
                   <td className="px-4 py-3 hidden sm:table-cell">
-                    <div className="w-full bg-slate-800 h-1.5 overflow-hidden">
+                    <div className="w-full bg-neutral-800 h-1.5 overflow-hidden">
                       <div
                         className={`h-full transition-all duration-700 ${
                           isTop
                             ? "bg-emerald-500"
                             : prob > 0.05
                             ? "bg-sky-600"
-                            : "bg-slate-600"
+                            : "bg-neutral-600"
                         }`}
                         style={{ width: `${Math.min(100, prob * 100 / (sorted[0]?.[1] || 1) * 100)}%` }}
                       />
@@ -176,10 +176,10 @@ export const WinProbsPanel: React.FC<WinProbsPanelProps> = ({
 
       {/* Show more / less */}
       {topTeams.length > 10 && (
-        <div className="px-4 py-3 border-t border-slate-800 text-center">
+        <div className="px-4 py-3 border-t border-neutral-800 text-center">
           <button
             onClick={() => setShowAll(!showAll)}
-            className="text-xs text-slate-400 hover:text-white font-semibold transition-colors cursor-pointer"
+            className="text-xs text-neutral-400 hover:text-white font-semibold transition-colors cursor-pointer"
           >
             {showAll
               ? `Show Top 10 only`

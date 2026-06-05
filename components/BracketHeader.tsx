@@ -52,9 +52,9 @@ export const BracketHeader: React.FC<BracketHeaderProps> = ({
   const hasActiveOverrides = chaosFactor > 0 || (boostTeam !== "" && boostAmount > 0) || simRuns > 1;
 
   return (
-    <div className="bg-slate-900 text-white rounded-none shadow-lg border border-slate-800 overflow-hidden">
+    <div className="bg-neutral-900 text-white rounded-none shadow-lg border border-neutral-800 overflow-hidden">
       {/* Top Main Row */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 p-6 border-b border-slate-850">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 p-6 border-b border-neutral-850">
         <div>
           <h2 className="text-lg font-bold tracking-tight flex items-center gap-2">
             AI Strategy Controls
@@ -64,13 +64,13 @@ export const BracketHeader: React.FC<BracketHeaderProps> = ({
               </span>
             )}
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-neutral-400 mt-0.5">
             Configure global simulation parameters.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
-          <div className="bg-slate-850 px-4 py-2 border border-slate-800 text-sm mr-auto lg:mr-0 rounded-none">
+          <div className="bg-neutral-850 px-4 py-2 border border-neutral-800 text-sm mr-auto lg:mr-0 rounded-none">
             Progress:{" "}
             <span className="font-semibold text-green-400">
               {completedRoundsCount} of 6
@@ -84,7 +84,7 @@ export const BracketHeader: React.FC<BracketHeaderProps> = ({
             className={`p-2.5 border transition duration-150 relative cursor-pointer rounded-none ${
               showSettings || hasActiveOverrides
                 ? "bg-violet-600/25 border-violet-500/40 text-violet-300"
-                : "bg-slate-800/40 border-slate-750 text-slate-450 hover:bg-slate-850 hover:text-white"
+                : "bg-neutral-800/40 border-neutral-750 text-neutral-450 hover:bg-neutral-850 hover:text-white"
             }`}
             title="Configure Custom AI Strategy Settings"
           >
@@ -93,20 +93,20 @@ export const BracketHeader: React.FC<BracketHeaderProps> = ({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
             {hasActiveOverrides && !showSettings && (
-              <span className="absolute -top-1 -right-1 h-3 w-3 bg-violet-500 rounded-full border-2 border-slate-900" />
+              <span className="absolute -top-1 -right-1 h-3 w-3 bg-violet-500 rounded-full border-2 border-neutral-900" />
             )}
           </button>
 
           {/* AI Autofill trigger group */}
-          <div className="flex items-center gap-1.5 bg-slate-800/40 p-1.5 border border-slate-750 rounded-none">
+          <div className="flex items-center gap-1.5 bg-neutral-800/40 p-1.5 border border-neutral-750 rounded-none">
             <select
               value={targetRound}
               onChange={(e) => setTargetRound(e.target.value as Round | "all")}
               disabled={aiLoading}
-              className="bg-transparent text-xs text-slate-200 font-medium px-2 py-1.5 rounded-none focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer max-w-[140px]"
+              className="bg-transparent text-xs text-neutral-200 font-medium px-2 py-1.5 rounded-none focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer max-w-[140px]"
             >
               {ROUND_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value} className="bg-slate-900 text-white">
+                <option key={opt.value} value={opt.value} className="bg-neutral-900 text-white">
                   {opt.label}
                 </option>
               ))}
@@ -149,11 +149,11 @@ export const BracketHeader: React.FC<BracketHeaderProps> = ({
 
       {/* Expandable Custom AI Strategy Panel */}
       {showSettings && (
-        <div className="bg-slate-950 p-5 border-b border-slate-850 grid grid-cols-1 md:grid-cols-4 gap-6 animate-fadeIn">
+        <div className="bg-neutral-950 p-5 border-b border-neutral-850 grid grid-cols-1 md:grid-cols-4 gap-6 animate-fadeIn">
           {/* Chaos / Surprise Factor */}
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <label className="text-xs font-semibold text-slate-350 tracking-wider uppercase">
+              <label className="text-xs font-semibold text-neutral-350 tracking-wider uppercase">
                 Upsets / Chaos Factor
               </label>
               <span className="text-xs font-mono text-violet-400 font-bold bg-violet-500/10 px-2 py-0.5 rounded-none">
@@ -167,22 +167,22 @@ export const BracketHeader: React.FC<BracketHeaderProps> = ({
               step="0.05"
               value={chaosFactor}
               onChange={(e) => setChaosFactor(parseFloat(e.target.value))}
-              className="w-full accent-violet-500 h-1.5 bg-slate-800 rounded-none appearance-none cursor-pointer"
+              className="w-full accent-violet-500 h-1.5 bg-neutral-800 rounded-none appearance-none cursor-pointer"
             />
-            <p className="text-[10px] text-slate-500 leading-relaxed">
+            <p className="text-[10px] text-neutral-500 leading-relaxed">
               Higher value introduces surprise elements/random sampling based on actual team probabilities instead of always selecting the mathematical favorite.
             </p>
           </div>
 
           {/* Favored Team */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-350 tracking-wider uppercase block">
+            <label className="text-xs font-semibold text-neutral-350 tracking-wider uppercase block">
               Favor / Boost Team
             </label>
             <select
               value={boostTeam}
               onChange={(e) => setBoostTeam(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-800 rounded-none px-3 py-2 text-xs text-slate-200 focus:ring-1 focus:ring-violet-500 focus:outline-none cursor-pointer"
+              className="w-full bg-neutral-900 border border-neutral-800 rounded-none px-3 py-2 text-xs text-neutral-200 focus:ring-1 focus:ring-violet-500 focus:outline-none cursor-pointer"
             >
               <option value="">No custom boost</option>
               {SORTED_TEAM_NAMES.map((name) => (
@@ -191,7 +191,7 @@ export const BracketHeader: React.FC<BracketHeaderProps> = ({
                 </option>
               ))}
             </select>
-            <p className="text-[10px] text-slate-500 leading-relaxed">
+            <p className="text-[10px] text-neutral-500 leading-relaxed">
               Select a team to receive a global simulation advantage, simulating custom bias conditions (e.g. home advantage, fan pressure).
             </p>
           </div>
@@ -199,7 +199,7 @@ export const BracketHeader: React.FC<BracketHeaderProps> = ({
           {/* Boost Strength */}
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <label className="text-xs font-semibold text-slate-350 tracking-wider uppercase">
+              <label className="text-xs font-semibold text-neutral-350 tracking-wider uppercase">
                 Boost Strength
               </label>
               <span className="text-xs font-mono text-violet-400 font-bold bg-violet-500/10 px-2 py-0.5 rounded-none">
@@ -214,22 +214,22 @@ export const BracketHeader: React.FC<BracketHeaderProps> = ({
               value={boostAmount}
               disabled={boostTeam === ""}
               onChange={(e) => setBoostAmount(parseInt(e.target.value))}
-              className="w-full accent-violet-500 h-1.5 bg-slate-800 rounded-none appearance-none cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+              className="w-full accent-violet-500 h-1.5 bg-neutral-800 rounded-none appearance-none cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
             />
-            <p className="text-[10px] text-slate-500 leading-relaxed">
+            <p className="text-[10px] text-neutral-500 leading-relaxed">
               The amount of ELO strength and form calibration boost given to the favored team throughout the simulated tournament matches.
             </p>
           </div>
 
           {/* Simulation Runs */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-350 tracking-wider uppercase block">
+            <label className="text-xs font-semibold text-neutral-350 tracking-wider uppercase block">
               Simulation Runs
             </label>
             <select
               value={simRuns}
               onChange={(e) => setSimRuns(parseInt(e.target.value))}
-              className="w-full bg-slate-900 border border-slate-800 rounded-none px-3 py-2 text-xs text-slate-200 focus:ring-1 focus:ring-violet-500 focus:outline-none cursor-pointer"
+              className="w-full bg-neutral-900 border border-neutral-800 rounded-none px-3 py-2 text-xs text-neutral-200 focus:ring-1 focus:ring-violet-500 focus:outline-none cursor-pointer"
             >
               <option value="1">1 Run (Fast/Deterministic)</option>
               <option value="10">10 Runs</option>
@@ -238,7 +238,7 @@ export const BracketHeader: React.FC<BracketHeaderProps> = ({
               <option value="250">250 Runs</option>
               <option value="500">500 Runs</option>
             </select>
-            <p className="text-[10px] text-slate-500 leading-relaxed">
+            <p className="text-[10px] text-neutral-500 leading-relaxed">
               Run the tournament simulation multiple times to calculate overall winning frequencies for each country.
             </p>
           </div>

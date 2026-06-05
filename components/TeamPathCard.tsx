@@ -33,23 +33,23 @@ export const TeamPathCard: React.FC = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-none p-6 shadow-sm">
-      <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-1">
+    <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-none p-6 shadow-sm">
+      <h3 className="text-lg font-bold text-neutral-800 dark:text-white mb-1">
         Tournament Path Probability
       </h3>
-      <p className="text-sm text-slate-500 dark:text-slate-400 mb-5">
+      <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-5">
         Calculate the cumulative probability of a team reaching each round of the tournament.
       </p>
 
       <div className="flex flex-col sm:flex-row gap-3 items-end">
         <div className="flex-1 space-y-1.5">
-          <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
+          <label className="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 block">
             Select Team
           </label>
           <select
             value={selectedTeam}
             onChange={(e) => setSelectedTeam(e.target.value)}
-            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-none px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
+            className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-none px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
           >
             {SORTED_TEAMS.map((team) => (
               <option key={team} value={team}>
@@ -61,7 +61,7 @@ export const TeamPathCard: React.FC = () => {
         <button
           onClick={handleAnalyze}
           disabled={loading}
-          className="bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 dark:hover:bg-slate-600 text-white font-semibold py-3 px-6 rounded-none text-sm transition duration-150 disabled:opacity-50 cursor-pointer active:scale-95"
+          className="bg-neutral-800 dark:bg-neutral-700 hover:bg-neutral-900 dark:hover:bg-neutral-600 text-white font-semibold py-3 px-6 rounded-none text-sm transition duration-150 disabled:opacity-50 cursor-pointer active:scale-95"
         >
           {loading ? "Analyzing..." : "Analyze Path"}
         </button>
@@ -73,11 +73,11 @@ export const TeamPathCard: React.FC = () => {
 
       {pathData && (
         <div className="mt-6 space-y-3">
-          <div className="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
+          <div className="flex items-center gap-3 mb-4 pb-3 border-b border-neutral-100 dark:border-neutral-800">
             <span className="text-2xl">{TEAM_FLAGS[pathData.team]}</span>
             <div>
-              <span className="font-bold text-slate-800 dark:text-white">{pathData.team}</span>
-              <span className="text-xs text-slate-400 block">
+              <span className="font-bold text-neutral-800 dark:text-white">{pathData.team}</span>
+              <span className="text-xs text-neutral-400 block">
                 {pathData.group} | ELO {pathData.elo} | Form {(pathData.form * 100).toFixed(0)}%
               </span>
             </div>
@@ -90,12 +90,12 @@ export const TeamPathCard: React.FC = () => {
             return (
               <div key={key} className="space-y-1">
                 <div className="flex justify-between text-sm">
-                  <span className="font-medium text-slate-700 dark:text-slate-300">{label}</span>
-                  <span className="font-bold text-slate-800 dark:text-white">
+                  <span className="font-medium text-neutral-700 dark:text-neutral-300">{label}</span>
+                  <span className="font-bold text-neutral-800 dark:text-white">
                     {percentage.toFixed(1)}%
                   </span>
                 </div>
-                <div className="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-none overflow-hidden">
+                <div className="w-full bg-neutral-100 dark:bg-neutral-800 h-2.5 rounded-none overflow-hidden">
                   <div
                     className="h-full bg-gradient-to-r from-emerald-500 to-green-400 transition-all duration-500 rounded-none"
                     style={{ width: `${Math.max(percentage, 1)}%` }}

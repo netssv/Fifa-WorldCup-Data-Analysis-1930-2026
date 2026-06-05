@@ -52,13 +52,13 @@ async def simulate_full_bracket(
         sum_p = p_a + p_b or 1.0
         p_a_norm = p_a / sum_p
 
-        favorite = ta if p_a >= p_b else tb
+        if sim_runs == 1 and chaos_factor == 0.0:
+            return ta if p_a >= p_b else tb
+
         if chaos_factor > 0.0:
-            sampled = ta if random.random() < p_a_norm else tb
-            if random.random() < chaos_factor:
-                return sampled
-            return favorite
-        return favorite
+            p_a_norm = p_a_norm * (1 - chaos_factor) + 0.5 * chaos_factor
+
+        return ta if random.random() < p_a_norm else tb
 
     def run_single_simulation():
         # ── Group stage ──────────────────────────
@@ -80,8 +80,30 @@ async def simulate_full_bracket(
                     qualify_scores[tb] += p_b + p_draw * 0.5
 
             max_s = max(qualify_scores.values()) or 1.0
-            ranked = sorted(qualify_scores.items(), key=lambda x: x[1], reverse=True)
-            qualifiers = [ranked[0][0], ranked[1][0]]
+            
+            if sim_runs == 1 and chaos_factor == 0.0:
+                ranked = sorted(qualify_scores.items(), key=lambda x: x[1], reverse=True)
+                qualifiers = [ranked[0][0], ranked[1][0]]
+            else:
+                team_probs = {t: (s / max_s) for t, s in qualify_scores.items()}
+                if chaos_factor > 0.0:
+                    team_probs = {t: p * (1 - chaos_factor) + 0.5 * chaos_factor for t, p in team_probs.items()}
+                
+                weights = list(team_probs.values())
+                teams_list = list(team_probs.keys())
+                
+                t1_idx = random.choices(range(len(teams_list)), weights=weights, k=1)[0]
+                t1 = teams_list[t1_idx]
+                
+                weights[t1_idx] = 0.0
+                if sum(weights) == 0:
+                    t2_idx = (t1_idx + 1) % len(teams_list)
+                else:
+                    t2_idx = random.choices(range(len(teams_list)), weights=weights, k=1)[0]
+                t2 = teams_list[t2_idx]
+                
+                qualifiers = [t1, t2]
+
             all_qualifiers.extend(qualifiers)
             groups_result[group_name] = qualifiers
 

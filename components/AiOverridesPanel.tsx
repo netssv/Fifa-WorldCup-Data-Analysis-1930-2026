@@ -23,7 +23,7 @@ interface OverridesProps {
 
 export const AiOverridesPanel: React.FC<OverridesProps> = (p) => {
   return (
-    <div className="mt-6 border-t border-slate-200 dark:border-slate-800 pt-5">
+    <div className="mt-6 border-t border-neutral-200 dark:border-neutral-800 pt-5">
       {/* Header row: checkbox + Auto Fill button */}
       <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
         <div className="flex items-center gap-2">
@@ -32,9 +32,9 @@ export const AiOverridesPanel: React.FC<OverridesProps> = (p) => {
             id="custom-ai-overrides"
             checked={p.customEnabled}
             onChange={(e) => p.setCustomEnabled(e.target.checked)}
-            className="w-4 h-4 accent-emerald-500 rounded border-slate-300 cursor-pointer"
+            className="w-4 h-4 accent-emerald-500 rounded border-neutral-300 cursor-pointer"
           />
-          <label htmlFor="custom-ai-overrides" className="text-sm font-bold text-slate-700 dark:text-slate-300 cursor-pointer select-none">
+          <label htmlFor="custom-ai-overrides" className="text-sm font-bold text-neutral-700 dark:text-neutral-300 cursor-pointer select-none">
             Custom AI Parameter Overrides
           </label>
         </div>
@@ -77,9 +77,9 @@ export const AiOverridesPanel: React.FC<OverridesProps> = (p) => {
 
       {/* Sliders panel (only when enabled) */}
       {p.customEnabled && (
-        <div className="space-y-4 p-4 bg-slate-50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800 rounded-none animate-fade-in">
+        <div className="space-y-4 p-4 bg-neutral-50 dark:bg-neutral-950/40 border border-neutral-100 dark:border-neutral-800 rounded-none animate-fade-in">
           {/* Column headers */}
-          <div className="grid grid-cols-2 gap-6 text-center border-b border-slate-200 dark:border-slate-800 pb-2">
+          <div className="grid grid-cols-2 gap-6 text-center border-b border-neutral-200 dark:border-neutral-800 pb-2">
             <span className="text-xs font-black uppercase text-emerald-600 dark:text-emerald-400">{p.teamA}</span>
             <span className="text-xs font-black uppercase text-blue-600 dark:text-blue-400">{p.teamB}</span>
           </div>
@@ -121,16 +121,16 @@ interface SliderProps {
 
 const Slider: React.FC<SliderProps> = ({ label, val, onChange, min, max, step, pct }) => (
   <div className="space-y-1 text-left">
-    <div className="flex justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
+    <div className="flex justify-between text-xs font-bold text-neutral-500 dark:text-neutral-400">
       <span>{label}</span>
-      <span className="text-slate-800 dark:text-white">
+      <span className="text-neutral-800 dark:text-white">
         {pct ? `${Math.round(val * 100)}%` : val}
       </span>
     </div>
     <input
       type="range" min={min} max={max} step={step} value={val}
       onChange={(e) => onChange(parseFloat(e.target.value))}
-      className="w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-none appearance-none cursor-pointer accent-emerald-500"
+      className="w-full h-1 bg-neutral-200 dark:bg-neutral-800 rounded-none appearance-none cursor-pointer accent-emerald-500"
     />
   </div>
 );
