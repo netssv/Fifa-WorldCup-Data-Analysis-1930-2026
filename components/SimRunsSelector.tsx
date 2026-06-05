@@ -1,6 +1,8 @@
 import React, { useState, useCallback } from "react";
 
-const PRESET_RUNS = [1, 10, 50, 100, 500, 1000, 5000];
+// Max 100 runs in production to protect Railway CPU budget ($5/month)
+const PRESET_RUNS = [1, 10, 50, 100];
+const MAX_CUSTOM_RUNS = 100;
 
 interface SimRunsSelectorProps {
   simRuns: number;
@@ -26,8 +28,8 @@ export const SimRunsSelector: React.FC<SimRunsSelectorProps> = ({
       const raw = e.target.value.replace(/\D/g, "");
       setCustomRuns(raw);
       const parsed = parseInt(raw, 10);
-      if (!isNaN(parsed) && parsed >= 1 && parsed <= 100000) {
-        setSimRuns(parsed);
+      if (!isNaN(parsed) && parsed >= 1 && parsed <= MAX_CUSTOM_RUNS) {
+        setSimRuns(Math.min(parsed, MAX_CUSTOM_RUNS));
       }
     },
     [setSimRuns]
@@ -41,15 +43,14 @@ export const SimRunsSelector: React.FC<SimRunsSelectorProps> = ({
           inputMode="numeric"
           value={customRuns}
           onChange={handleCustomChange}
-          placeholder="e.g. 2500"
+          placeholder={`1–${MAX_CUSTOM_RUNS}`}
           className="w-full bg-neutral-100 dark:bg-neutral-800 border border-violet-500/50 text-xs font-semibold px-3 py-2.5 text-neutral-800 dark:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
         />
+        <span className="text-[9px] text-neutral-400 whitespace-nowrap font-bold">max {MAX_CUSTOM_RUNS}</span>
         <button
           onClick={() => {
             setUseCustomRuns(false);
-            if (showSettings) {
-              onToggleSettings();
-            }
+            if (showSettings) onToggleSettings();
           }}
           className="text-neutral-500 dark:text-neutral-400 hover:text-red-500 dark:hover:text-red-400 border border-neutral-300 dark:border-neutral-700 hover:border-red-500/30 dark:hover:border-red-500/30 text-xs px-3 py-2.5 transition-colors font-bold flex-shrink-0 cursor-pointer rounded-sm bg-transparent"
           title="Back to presets"
@@ -70,7 +71,7 @@ export const SimRunsSelector: React.FC<SimRunsSelectorProps> = ({
       >
         {PRESET_RUNS.map((r) => (
           <option key={r} value={r} className="bg-white dark:bg-neutral-900">
-            {r === 1 ? "1 Run (Fast)" : `${r.toLocaleString()} Runs`}
+            {r === 1 ? "1 Run (Fast)" : r === 100 ? "100 Runs (Max)" : `${r} Runs`}
           </option>
         ))}
       </select>

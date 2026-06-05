@@ -146,7 +146,8 @@ async def simulate_full_bracket(
         }
 
     # Execute simulations
-    runs_to_do = max(1, min(1000, sim_runs))
+    # Hard cap: protect Railway $5/month budget — max 100 runs per request
+    runs_to_do = max(1, min(100, sim_runs))
     championship_wins = {}
     all_results = []
 
