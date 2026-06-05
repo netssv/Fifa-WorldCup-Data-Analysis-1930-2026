@@ -53,7 +53,7 @@ export const TeamPathCard: React.FC = () => {
           >
             {SORTED_TEAMS.map((team) => (
               <option key={team} value={team}>
-                {TEAM_FLAGS[team]} {team}
+                {team}
               </option>
             ))}
           </select>
@@ -74,7 +74,11 @@ export const TeamPathCard: React.FC = () => {
       {pathData && (
         <div className="mt-6 space-y-3">
           <div className="flex items-center gap-3 mb-4 pb-3 border-b border-neutral-100 dark:border-neutral-800">
-            <span className="text-2xl">{TEAM_FLAGS[pathData.team]}</span>
+            <span className="text-2xl">
+              {TEAM_FLAGS[pathData.team] ? (
+                <img src={TEAM_FLAGS[pathData.team]} alt={pathData.team} className="w-8 h-5 object-cover inline-block shadow-sm" />
+              ) : "🏳️"}
+            </span>
             <div>
               <span className="font-bold text-neutral-800 dark:text-white">{pathData.team}</span>
               <span className="text-xs text-neutral-400 block">

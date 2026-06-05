@@ -6,7 +6,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
+    <html lang="en" className="scroll-smooth dark" suppressHydrationWarning>
       <head>
         <title>FIFA World Cup 2026 Bracket</title>
         <meta

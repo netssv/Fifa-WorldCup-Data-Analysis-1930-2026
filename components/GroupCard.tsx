@@ -70,7 +70,7 @@ export const GroupCard: React.FC<GroupCardProps> = ({
         {teams.map(team => {
           const selected = isSelected(team);
           const disabled = !selected && reachedLimit;
-          const flag = TEAM_FLAGS[team] || "🏳️";
+          const flag = TEAM_FLAGS[team];
 
           return (
             <button
@@ -86,6 +86,11 @@ export const GroupCard: React.FC<GroupCardProps> = ({
               }`}
             >
               <span className="flex items-center gap-3">
+                {flag ? (
+                  <img src={flag} alt={team} className="w-6 h-4 object-cover shadow-sm" />
+                ) : (
+                  <span className="text-xl">🏳️</span>
+                )}
                 <span>{team}</span>
               </span>
               {selected && (

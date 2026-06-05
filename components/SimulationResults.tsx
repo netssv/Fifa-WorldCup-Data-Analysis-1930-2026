@@ -69,7 +69,11 @@ export const SimulationResults: React.FC<SimulationResultsProps> = ({
             Predicted Outcome:
           </span>
           <div className="flex items-center gap-2.5 font-bold text-neutral-850 dark:text-white bg-neutral-50 dark:bg-neutral-950 px-4 py-2.5 rounded-none border border-neutral-200/60 dark:border-neutral-800">
-            <span className="text-xl">{TEAM_FLAGS[result.predicted_winner]}</span>
+            <span className="text-xl">
+              {TEAM_FLAGS[result.predicted_winner] ? (
+                <img src={TEAM_FLAGS[result.predicted_winner]} alt={result.predicted_winner} className="w-8 h-5 object-cover inline-block shadow-sm" />
+              ) : "🏳️"}
+            </span>
             <span>{result.predicted_winner} advances/wins</span>
           </div>
         </div>

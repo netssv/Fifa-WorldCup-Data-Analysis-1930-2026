@@ -19,7 +19,9 @@ export const TeamCompareCard: React.FC<TeamCompareCardProps> = ({ teamName, posi
       <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
       <span className="text-5xl mb-3 transform group-hover:scale-110 transition-transform duration-300 select-none">
-        {TEAM_FLAGS[teamName] || "🏳️"}
+        {TEAM_FLAGS[teamName] ? (
+          <img src={TEAM_FLAGS[teamName]} alt={teamName} className="w-8 h-5 object-cover inline-block shadow-sm" />
+        ) : "🏳️"}
       </span>
       <h4 className="text-base font-extrabold text-neutral-800 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors duration-200 mb-4">
         {teamName}

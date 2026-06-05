@@ -111,9 +111,7 @@ export const WinProbsPanel: React.FC<WinProbsPanelProps> = ({
                   <td className="px-4 py-3">
                     <span className="flex items-center gap-2.5">
                       {TEAM_FLAGS[team] && (
-                        <span className="text-base leading-none">
-                          {TEAM_FLAGS[team]}
-                        </span>
+                        <img src={TEAM_FLAGS[team]} alt={team} className="w-4 h-3 object-cover shadow-sm mr-1.5" />
                       )}
                       <span
                         className={`font-semibold ${

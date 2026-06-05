@@ -3,68 +3,35 @@ export interface GroupData {
   teams: string[];
 }
 
-const TEAM_FLAGS_RAW: Record<string, string> = {
+export const TEAM_ISO_CODES: Record<string, string> = {
   // Group A
-  "Mexico": "🇲🇽",
-  "South Africa": "🇿🇦",
-  "South Korea": "🇰🇷",
-  "Czech Republic": "🇨🇿",
+  "Mexico": "mx", "South Africa": "za", "South Korea": "kr", "Czech Republic": "cz",
   // Group B
-  "Canada": "🇨🇦",
-  "Bosnia and Herzegovina": "🇧🇦",
-  "Qatar": "🇶🇦",
-  "Switzerland": "🇨🇭",
+  "Canada": "ca", "Bosnia and Herzegovina": "ba", "Qatar": "qa", "Switzerland": "ch",
   // Group C
-  "Brazil": "🇧🇷",
-  "Morocco": "🇲🇦",
-  "Haiti": "🇭🇹",
-  "Scotland": "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+  "Brazil": "br", "Morocco": "ma", "Haiti": "ht", "Scotland": "gb-sct",
   // Group D
-  "United States": "🇺🇸",
-  "Paraguay": "🇵🇾",
-  "Australia": "🇦🇺",
-  "Turkiye": "🇹🇷",
+  "United States": "us", "Paraguay": "py", "Australia": "au", "Turkiye": "tr",
   // Group E
-  "Germany": "🇩🇪",
-  "Curaçao": "🇨🇼",
-  "Ivory Coast": "🇨🇮",
-  "Ecuador": "🇪🇨",
+  "Germany": "de", "Curaçao": "cw", "Ivory Coast": "ci", "Ecuador": "ec",
   // Group F
-  "Netherlands": "🇳🇱",
-  "Japan": "🇯🇵",
-  "Sweden": "🇸🇪",
-  "Tunisia": "🇹🇳",
+  "Netherlands": "nl", "Japan": "jp", "Sweden": "se", "Tunisia": "tn",
   // Group G
-  "Belgium": "🇧🇪",
-  "Egypt": "🇪🇬",
-  "Iran": "🇮🇷",
-  "New Zealand": "🇳🇿",
+  "Belgium": "be", "Egypt": "eg", "Iran": "ir", "New Zealand": "nz",
   // Group H
-  "Spain": "🇪🇸",
-  "Cape Verde": "🇨🇻",
-  "Saudi Arabia": "🇸🇦",
-  "Uruguay": "🇺🇾",
+  "Spain": "es", "Cape Verde": "cv", "Saudi Arabia": "sa", "Uruguay": "uy",
   // Group I
-  "France": "🇫🇷",
-  "Senegal": "🇸🇳",
-  "Iraq": "🇮🇶",
-  "Norway": "🇳🇴",
+  "France": "fr", "Senegal": "sn", "Iraq": "iq", "Norway": "no",
   // Group J
-  "Argentina": "🇦🇷",
-  "Algeria": "🇩🇿",
-  "Austria": "🇦🇹",
-  "Jordan": "🇯🇴",
+  "Argentina": "ar", "Algeria": "dz", "Austria": "at", "Jordan": "jo",
   // Group K
-  "Portugal": "🇵🇹",
-  "DR Congo": "🇨🇩",
-  "Uzbekistan": "🇺🇿",
-  "Colombia": "🇨🇴",
+  "Portugal": "pt", "DR Congo": "cd", "Uzbekistan": "uz", "Colombia": "co",
   // Group L
-  "England": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-  "Croatia": "🇭🇷",
-  "Ghana": "🇬🇭",
-  "Panama": "🇵🇦"
+  "England": "gb-eng", "Croatia": "hr", "Ghana": "gh", "Panama": "pa"
 };
+
+export const getFlagUrl = (team: string) => 
+  TEAM_ISO_CODES[team] ? `https://flagcdn.com/w40/${TEAM_ISO_CODES[team]}.png` : "";
 
 export const GROUPS: GroupData[] = [
   { name: "Group A", teams: ["Mexico", "South Africa", "South Korea", "Czech Republic"] },
@@ -137,8 +104,8 @@ export const TEAM_STATS: Record<string, TeamStats> = {
   "Haiti": { elo: 1200, overall: 67.0, valueM: 15 }
 };
 
-export const TEAM_FLAGS: Record<string, string> = Object.keys(TEAM_FLAGS_RAW).reduce((acc, key) => {
-  acc[key] = "";
+export const TEAM_FLAGS: Record<string, string> = Object.keys(TEAM_ISO_CODES).reduce((acc, key) => {
+  acc[key] = getFlagUrl(key);
   return acc;
 }, {} as Record<string, string>);
 

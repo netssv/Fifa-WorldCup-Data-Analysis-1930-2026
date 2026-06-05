@@ -61,7 +61,12 @@ export const RoundColumn: React.FC<RoundColumnProps> = ({
               }`}
             >
               <span className="flex items-center gap-2.5 overflow-hidden">
-                <span className="truncate text-sm">{team}</span>
+                {TEAM_FLAGS[team] ? (
+                  <img src={TEAM_FLAGS[team]} alt={team} className="w-5 h-3.5 object-cover shadow-sm mr-2" />
+                ) : (
+                  <span className="mr-2 text-base">🏳️</span>
+                )}
+                <span className="font-semibold text-sm truncate">{team}</span>
               </span>
               {selected && (
                 <svg
