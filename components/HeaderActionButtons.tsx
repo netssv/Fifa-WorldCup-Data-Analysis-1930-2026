@@ -3,9 +3,6 @@ import React from "react";
 interface HeaderActionButtonsProps {
   isDark: boolean;
   onToggleTheme: () => void;
-  showSettings: boolean;
-  hasActiveOverrides: boolean;
-  onToggleSettings: () => void;
   onSave: () => void;
   onReset: () => void;
 }
@@ -25,45 +22,14 @@ const ThemeToggleIcon: React.FC<{ isDark: boolean }> = ({ isDark }) =>
     </svg>
   );
 
-/** Save, Reset, Theme toggle, and Advanced Settings toggle buttons */
+/** Save, Reset, and Theme toggle buttons */
 export const HeaderActionButtons: React.FC<HeaderActionButtonsProps> = ({
   isDark,
   onToggleTheme,
-  showSettings,
-  hasActiveOverrides,
-  onToggleSettings,
   onSave,
   onReset,
 }) => (
-  <div className="grid grid-cols-4 gap-2 w-full">
-    {/* Advanced Settings Toggle */}
-    <button
-      onClick={onToggleSettings}
-      className={`py-2 px-3 border transition-all duration-200 cursor-pointer relative group flex items-center justify-center rounded-sm ${
-        showSettings || hasActiveOverrides
-          ? "bg-violet-600/20 border-violet-500/50 text-violet-400 hover:bg-violet-600/30"
-          : "bg-neutral-150 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-700 text-neutral-500 hover:text-violet-400 hover:border-violet-500/50"
-      }`}
-      title="Advanced Simulation Settings"
-    >
-      <svg
-        className={`h-4.5 w-4.5 transition-transform duration-300 ${showSettings ? "rotate-45" : "group-hover:rotate-12"}`}
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
-        />
-      </svg>
-      {hasActiveOverrides && !showSettings && (
-        <span className="absolute top-1 right-1 h-2.5 w-2.5 bg-amber-400 rounded-full border-2 border-white dark:border-neutral-900" />
-      )}
-    </button>
-
+  <div className="grid grid-cols-3 gap-2 w-full">
     {/* Theme Toggle */}
     <button
       onClick={onToggleTheme}

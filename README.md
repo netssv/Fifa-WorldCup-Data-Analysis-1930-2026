@@ -1,66 +1,51 @@
-# Fifa-WorldCup-Data-Analysis-1930-2026
+# FIFA World Cup 2026 Predictor & AI Lab
 
-## 🏆 FIFA World Cup 2026 Predictor
+An advanced **Machine Learning** project that predicts and simulates the **FIFA World Cup 2026** results, from group stages to the final champion! ⚽🔥
 
-A **Machine Learning** project that predicts the **FIFA World Cup 2026** results, from **group stage to the final champion**! ⚽🔥  
-
-This project involves **data scraping, data cleaning, predictive modeling, and knockout round simulation** to forecast match results using historical FIFA World Cup data (1930-2022).
+This repository features a trained Python ML model stack coupled with a premium, fully interactive web dashboard built in React, Next.js, and TypeScript to visualize predictions, custom strategy overrides, and statistical simulation runs.
 
 ---
 
-## 🚀 Project Overview
+## 🚀 Key Features & Interactive Lab
 
-🔹 **Scraped Data**: Extracted historical World Cup match results from **Wikipedia (1930-2022)**  
-🔹 **Data Cleaning & Structuring**: Processed and formatted data into a structured dataset  
-🔹 **Fixture Generation**: Created possible **2026 group-stage fixtures**  
-🔹 **Match Predictions**: Trained ML models to **predict match outcomes (home & away goals)**  
-🔹 **Knockout Simulation**: Simulated each stage, determining the **winner of the tournament**  
-🔹 **Data Export**: Outputs match predictions & tournament standings in CSV format  
+### 1️⃣ Interactive Tournament Bracket
+* **Dual Views:** Switch between a swipeable **Compact (Vertical)** timeline and a **Classic (Horizontal)** tree.
+* **Premium Export System:** Render and download your full prediction brackets as high-fidelity **PNG** or **PDF** files with clean formatting (no scrollbars, no clipped margins, and zero overlaps even on mobile viewports).
 
----
+### 2️⃣ Tournament Simulation Engine
+* **Deterministic Single Runs:** Select `1 Run (Fast)` for pure, data-driven predictions. The UI clearly displays predicted match outcomes and championship flags.
+* **Probabilistic Multi-Runs:** Run `100` to `5000+` simulation cycles. The simulator aggregates tournament outcomes to generate realistic win rates and statistical distributions.
+* **Chaos Factor Selector:** Introduce a custom chaos slider (0% to 100%) to elevate the likelihood of upsets and simulate unpredictable matches.
+* **Favored Team ELO Boost:** Select any team to grant them a custom ELO advantage (up to +500 ELO) to model home-court advantage, crowd support, or bias.
+* **UX Simplicity:** Custom buttons open settings instantly, and a single "Reset to Defaults" option restores clean data-driven models.
 
-## ⚡ Technologies & Skills Used
+### 3️⃣ Feature Pipeline & Verification Inspector
+* **ML Blend (V5):** Integrates 35% Random Forest predicted goals with a 65% ELO & Form expected goals formula, resolved via Poisson grid mass simulation.
+* **Integrated Advanced Datasets:** Click-to-toggle information tooltips featuring direct reference links (e.g., Transfermarkt, EA Sports FC, FBref, FIFPRO) to inspect the 8 underlying feature pipelines:
+  1. **Squad Value** (depth of talent valuations)
+  2. **EA FC Ratings** (aggregated player card ratings)
+  3. **Venue Altitude** (wear factors of stadium elevations)
+  4. **xG Statistics** (qualifier expected goals performance)
+  5. **Market Odds** (implied bookmaker consensus probabilities)
+  6. **Coach Experience** (manager tenure and championship indexes)
+  7. **Fatigue & Match Load** (cumulative season workloads)
+  8. **Pressure & Shootouts** (historic penalty win rates and top-20 records)
 
-✅ **Python** – Core programming language  
-✅ **Pandas** – Data cleaning, structuring & manipulation  
-✅ **BeautifulSoup** – Web scraping from Wikipedia  
-✅ **Scikit-learn** – Machine learning models (Random Forest) for match predictions  
-✅ **NumPy** – Mathematical operations & simulations  
-✅ **Matplotlib & Seaborn** – Data visualization  
-✅ **Jupyter Notebook** – Development & testing environment  
-
----
-## 🎯 Features & Workflow  
-
-### 1️⃣ Scraping & Data Preprocessing  
-- Extracts **FIFA World Cup match history (1930-2022)** from Wikipedia  
-- Cleans and structures data into a usable format  
-
-### 2️⃣ Fixture Generation  
-- Generates **possible 2026 group-stage fixtures**  
-- Saves to `fixtures_2026.csv`  
-
-### 3️⃣ Machine Learning Model Training  
-- **Encodes team strengths**  
-- Trains **ML models** to predict **home & away goals**  
-- Uses **Random Forest Regressor** for score prediction  
-
-### 4️⃣ Tournament Simulation  
-- Predicts **group stage results**  
-- Simulates **knockout rounds** (Round of 16, Quarterfinals, Semifinals, Final)  
-- Determines **FIFA World Cup 2026 Champion** 🏆  
-
-### 5️⃣ Data Export  
-- Saves all results, including **match predictions & tournament standings**  
+### 4️⃣ Premium UX & Animations
+* **Unified Floating Trophy:** Floating gold trophy header animated in tandem with centered orbiting particles and a soft diffused halo glow.
+* **Harmonious Dark Mode:** Responsive layout using a deep soccer-pitch theme with vibrant emerald, violet, and gold accents.
 
 ---
-## 🤝 Contributing
-Want to improve the model or add new features? Feel free to fork & contribute!
 
-🔹 Improve ML accuracy with advanced models
-🔹 Add expected goals (xG) analysis
-🔹 Optimize knockout stage simulation
----
-📜 License
-This project is open-source!
-🔥 Star this repo if you found it useful! 🚀⚽
+## 🛠️ Technology Stack
+
+### Frontend & Dashboard (Web App)
+* **Framework:** React / Next.js / TypeScript
+* **Styling:** Tailwind CSS (curated HSL palettes, glassmorphism, responsive grid layouts)
+* **Libraries:** `html-to-image` (offscreen headless renderer for PNG exports), `jspdf` (for PDF reports)
+
+### Machine Learning & Data Pipeline (Python API)
+* **Core:** Python / Pandas / NumPy
+* **Scraping:** BeautifulSoup (Wikipedia historical match data 1930-2022)
+* **Modeling:** Scikit-learn (RandomForestRegressor for goal prediction)
+* **Simulation:** Statistical probability modeling & Poisson distribution solvers

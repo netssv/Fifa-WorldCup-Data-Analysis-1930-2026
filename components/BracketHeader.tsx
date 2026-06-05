@@ -93,6 +93,8 @@ export const BracketHeader: React.FC<BracketHeaderProps> = ({
             simRuns={simRuns}
             setSimRuns={setSimRuns}
             aiLoading={aiLoading}
+            showSettings={showSettings}
+            onToggleSettings={handleToggleSettings}
           />
 
           {/* Simulate Button */}
@@ -127,9 +129,6 @@ export const BracketHeader: React.FC<BracketHeaderProps> = ({
             <HeaderActionButtons
               isDark={isDark}
               onToggleTheme={onToggleTheme}
-              showSettings={showSettings}
-              hasActiveOverrides={hasActiveOverrides}
-              onToggleSettings={handleToggleSettings}
               onSave={onSave}
               onReset={onReset}
             />

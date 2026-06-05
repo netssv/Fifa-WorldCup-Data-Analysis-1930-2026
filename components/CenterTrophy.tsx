@@ -44,11 +44,13 @@ const FinalistRow: React.FC<{
         ? <img src={flag} alt={team} crossOrigin="anonymous" className="w-6 h-4 object-cover rounded-sm" />
         : <div className="w-6 h-4 bg-neutral-200 dark:bg-neutral-700 rounded-sm" />
       }
-      <span className={`text-xs font-semibold truncate ${
-        isChamp ? "text-yellow-700 dark:text-yellow-300" : "text-neutral-700 dark:text-neutral-300"
-      }`}>
-        {team || "TBD"}
-      </span>
+      <div className="flex-1 min-w-0 text-left">
+        <span className={`text-xs font-semibold block leading-normal ${
+          isChamp ? "text-yellow-700 dark:text-yellow-300" : "text-neutral-700 dark:text-neutral-300"
+        }`}>
+          {team || "TBD"}
+        </span>
+      </div>
       {isChamp && (
         <svg className="ml-auto w-3.5 h-3.5 text-yellow-500 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
           <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0011 15.9V18H9v2h6v-2h-2v-2.1a5.01 5.01 0 003.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2z" />
@@ -78,6 +80,9 @@ export const CenterTrophy: React.FC<CenterTrophyProps> = ({ semi, finalWinner, o
         </span>
       </div>
     </div>
+
+    {/* Vertical connecting line to Grand Final */}
+    <div className="w-[1.5px] h-3.5 bg-emerald-500/40 dark:bg-emerald-500/30" />
 
     {/* Grand Final — each finalist is clickable */}
     <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-3 w-44 sm:w-52 shadow-lg">

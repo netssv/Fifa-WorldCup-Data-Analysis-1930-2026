@@ -65,6 +65,15 @@ export const WinProbsPanel: React.FC<WinProbsPanelProps> = ({ winProbs, simRunsT
           </div>
         )}
       </div>
+      
+      {!isMultiRun && (
+        <div className="px-6 py-2.5 bg-violet-500/10 border-b border-neutral-100 dark:border-neutral-800 text-[11px] text-violet-600 dark:text-violet-400 font-bold flex items-center gap-1.5">
+          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Single simulation is deterministic. Run 100+ simulations to generate realistic probabilities.
+        </div>
+      )}
 
       {/* Table */}
       <div className="overflow-x-auto">
@@ -77,7 +86,7 @@ export const WinProbsPanel: React.FC<WinProbsPanelProps> = ({ winProbs, simRunsT
                 <th className="text-right px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">Wins</th>
               )}
               <th className="text-right px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
-                {isMultiRun ? "Win Rate" : "Probability"}
+                {isMultiRun ? "Win Rate" : "Outcome"}
               </th>
               <th className="px-4 py-2.5 w-40 hidden sm:table-cell" />
             </tr>
@@ -120,10 +129,12 @@ export const WinProbsPanel: React.FC<WinProbsPanelProps> = ({ winProbs, simRunsT
 
                   <td className="px-4 py-3 text-right">
                     <span className={`text-xs font-mono font-bold ${
-                      prob > 0.15 ? "text-emerald-500 dark:text-emerald-400"
-                      : prob > 0.05 ? "text-sky-500 dark:text-sky-400"
-                      : "text-neutral-400"
-                    }`}>{pct}%</span>
+                      isMultiRun
+                        ? (prob > 0.15 ? "text-emerald-500 dark:text-emerald-400" : prob > 0.05 ? "text-sky-500 dark:text-sky-400" : "text-neutral-400")
+                        : "text-emerald-500 dark:text-emerald-400"
+                    }`}>
+                      {isMultiRun ? `${pct}%` : "Winner"}
+                    </span>
                   </td>
 
                   <td className="px-4 py-3 hidden sm:table-cell">
