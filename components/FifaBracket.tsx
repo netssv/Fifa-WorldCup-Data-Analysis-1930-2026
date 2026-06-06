@@ -13,20 +13,14 @@ import { useFifaBracket } from "../hooks/useFifaBracket";
 import { FifaTitleHeader } from "./FifaTitleHeader";
 import { ExportPanel } from "./ExportPanel";
 import { BracketNavigation, NAVIGATION_TABS } from "./BracketNavigation";
+import { FifaFooter } from "./FifaFooter";
 
 export const FifaBracket: React.FC = () => {
   const [isDark, setIsDark] = useState(true);
   const bracketSummaryRef = useRef<BracketSummaryHandle>(null);
 
   const handleToggleTheme = useCallback(() => {
-    const html = document.documentElement;
-    if (html.classList.contains("dark")) {
-      html.classList.remove("dark");
-      setIsDark(false);
-    } else {
-      html.classList.add("dark");
-      setIsDark(true);
-    }
+    setIsDark(document.documentElement.classList.toggle("dark"));
   }, []);
 
   const {
@@ -40,26 +34,22 @@ export const FifaBracket: React.FC = () => {
     boostTeam, setBoostTeam,
     boostAmount, setBoostAmount,
     simRuns, setSimRuns,
-    winProbs, simRunsTotal,
+    winProbs, teamStats, simRunsTotal, lastSimScope,
+    simProgress,
   } = useFifaBracket();
 
   const currentTabIndex = NAVIGATION_TABS.findIndex((t) => t.id === activeTab);
   const handlePrevTab = () => {
-    if (currentTabIndex > 0) {
-      const prevTab = NAVIGATION_TABS[currentTabIndex - 1];
-      if (getTabUnlockedStatus(prevTab.id)) setActiveTab(prevTab.id);
-    }
+    const prev = NAVIGATION_TABS[currentTabIndex - 1];
+    if (prev && getTabUnlockedStatus(prev.id)) setActiveTab(prev.id);
   };
   const handleNextTab = () => {
-    if (currentTabIndex < NAVIGATION_TABS.length - 1) {
-      const nextTab = NAVIGATION_TABS[currentTabIndex + 1];
-      if (getTabUnlockedStatus(nextTab.id)) setActiveTab(nextTab.id);
-    }
+    const next = NAVIGATION_TABS[currentTabIndex + 1];
+    if (next && getTabUnlockedStatus(next.id)) setActiveTab(next.id);
   };
 
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-6 text-neutral-800 dark:text-neutral-100 transition-colors duration-300">
-
       {/* ── Official FIFA 2026 Title Header ── */}
       <FifaTitleHeader />
 
@@ -80,6 +70,7 @@ export const FifaBracket: React.FC = () => {
         setSimRuns={setSimRuns}
         isDark={isDark}
         onToggleTheme={handleToggleTheme}
+        simProgress={simProgress}
       />
 
       {/* Save status toast */}
@@ -89,8 +80,30 @@ export const FifaBracket: React.FC = () => {
         </div>
       )}
 
-      {/* Win probabilities panel */}
-      {winProbs && <WinProbsPanel winProbs={winProbs} simRunsTotal={simRunsTotal} />}
+      {/* Win probabilities panel — solo para torneo completo */}
+      {winProbs && lastSimScope === "all" && (
+        <WinProbsPanel winProbs={winProbs} simRunsTotal={simRunsTotal} />
+      )}
+
+      {/* Banner informativo para simulaciones de ronda específica */}
+      {lastSimScope !== "all" && !aiLoading && (
+        <div className="bg-emerald-950/30 border border-emerald-800/40 px-5 py-3 flex items-center gap-3 text-sm">
+          <svg className="w-4 h-4 text-emerald-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span className="text-emerald-300 font-semibold">
+            Simulated: <span className="text-white">{
+              lastSimScope === "groups" ? "Group Stage"
+              : lastSimScope === "r32" ? "Round of 32"
+              : lastSimScope === "r16" ? "Round of 16"
+              : lastSimScope === "r8" ? "Quarterfinals"
+              : lastSimScope === "semi" ? "Semifinals"
+              : "Final"
+            }</span>
+          </span>
+          <span className="text-emerald-600 text-xs">— only this stage was updated in your bracket</span>
+        </div>
+      )}
 
       <BracketNavigation
         activeTab={activeTab}
@@ -110,25 +123,27 @@ export const FifaBracket: React.FC = () => {
                 selectedTeams={state.groups[group.name] || []}
                 onSelectTeam={(team) => handleGroupSelect(group.name, team)}
                 onSetQualifiers={handleSetGroupQualifiers}
+                winProbs={winProbs}
+                teamStats={teamStats}
               />
             ))}
           </div>
         )}
 
         {activeTab === "r32" && (
-          <RoundColumn round="r32" roundTitle="Round of 32" previousRoundTeams={getAvailableTeams(state, "r32")} selectedTeams={state.r32} onToggleTeam={(team) => handlePlayoffSelect("r32", team)} />
+          <RoundColumn round="r32" roundTitle="Round of 32" previousRoundTeams={getAvailableTeams(state, "r32")} selectedTeams={state.r32} onToggleTeam={(team) => handlePlayoffSelect("r32", team)} winProbs={winProbs} teamStats={teamStats} />
         )}
         {activeTab === "r16" && (
-          <RoundColumn round="r16" roundTitle="Round of 16" previousRoundTeams={getAvailableTeams(state, "r16")} selectedTeams={state.r16} onToggleTeam={(team) => handlePlayoffSelect("r16", team)} />
+          <RoundColumn round="r16" roundTitle="Round of 16" previousRoundTeams={getAvailableTeams(state, "r16")} selectedTeams={state.r16} onToggleTeam={(team) => handlePlayoffSelect("r16", team)} winProbs={winProbs} teamStats={teamStats} />
         )}
         {activeTab === "r8" && (
-          <RoundColumn round="r8" roundTitle="Quarterfinals" previousRoundTeams={getAvailableTeams(state, "r8")} selectedTeams={state.r8} onToggleTeam={(team) => handlePlayoffSelect("r8", team)} />
+          <RoundColumn round="r8" roundTitle="Quarterfinals" previousRoundTeams={getAvailableTeams(state, "r8")} selectedTeams={state.r8} onToggleTeam={(team) => handlePlayoffSelect("r8", team)} winProbs={winProbs} teamStats={teamStats} />
         )}
         {activeTab === "semi" && (
-          <RoundColumn round="semi" roundTitle="Semifinals" previousRoundTeams={getAvailableTeams(state, "semi")} selectedTeams={state.semi} onToggleTeam={(team) => handlePlayoffSelect("semi", team)} />
+          <RoundColumn round="semi" roundTitle="Semifinals" previousRoundTeams={getAvailableTeams(state, "semi")} selectedTeams={state.semi} onToggleTeam={(team) => handlePlayoffSelect("semi", team)} winProbs={winProbs} teamStats={teamStats} />
         )}
         {activeTab === "final" && (
-          <RoundColumn round="final" roundTitle="Grand Final" previousRoundTeams={getAvailableTeams(state, "final")} selectedTeams={state.final} onToggleTeam={(team) => handlePlayoffSelect("final", team)} />
+          <RoundColumn round="final" roundTitle="Grand Final" previousRoundTeams={getAvailableTeams(state, "final")} selectedTeams={state.final} onToggleTeam={(team) => handlePlayoffSelect("final", team)} winProbs={winProbs} teamStats={teamStats} />
         )}
 
         {activeTab === "summary" && (
@@ -172,21 +187,7 @@ export const FifaBracket: React.FC = () => {
       </div>
 
       {/* ── Footer / Copyleft & Technical details ── */}
-      <footer className="mt-12 pt-8 border-t border-neutral-200 dark:border-neutral-800 text-center text-xs text-neutral-500 dark:text-neutral-400 space-y-4">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-left md:text-right max-w-7xl mx-auto px-1">
-          <div className="text-left space-y-1">
-            <p className="font-semibold text-neutral-600 dark:text-neutral-300">Under the Hood</p>
-            <p className="max-w-xl leading-relaxed">
-              Frontend built with Next.js 16, React 19, and Tailwind CSS. Machine Learning backend powered by Python, FastAPI, Pandas, Scikit-learn, and XGBoost models running on Railway.
-            </p>
-          </div>
-          <div className="text-right md:self-end">
-            <p className="text-neutral-400 dark:text-neutral-500">
-              copyleft rodrigo martel
-            </p>
-          </div>
-        </div>
-      </footer>
+      <FifaFooter />
     </div>
   );
 };

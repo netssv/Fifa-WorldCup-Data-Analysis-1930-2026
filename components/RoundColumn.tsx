@@ -1,6 +1,6 @@
 import React from "react";
 import { TEAM_FLAGS } from "../lib/bracketData";
-import { Round, ROUND_LIMITS } from "../lib/bracketLogic";
+import { Round, ROUND_LIMITS, getFriendlyGoalDiffText } from "../lib/bracketLogic";
 
 interface RoundColumnProps {
   round: Exclude<Round, 'groups'>;
@@ -8,6 +8,11 @@ interface RoundColumnProps {
   previousRoundTeams: string[]; // Teams selected in the previous round
   selectedTeams: string[] | string; // Selected teams in this round
   onToggleTeam: (teamName: string) => void;
+  winProbs?: Record<string, number> | null;
+  teamStats?: Record<
+    string,
+    { avg_goals_scored: number; avg_goals_conceded: number; avg_goal_diff: number }
+  > | null;
 }
 
 export const RoundColumn: React.FC<RoundColumnProps> = ({
@@ -15,7 +20,9 @@ export const RoundColumn: React.FC<RoundColumnProps> = ({
   roundTitle,
   previousRoundTeams = [],
   selectedTeams = [],
-  onToggleTeam
+  onToggleTeam,
+  winProbs,
+  teamStats
 }) => {
   const limit = ROUND_LIMITS[round];
   
@@ -47,12 +54,14 @@ export const RoundColumn: React.FC<RoundColumnProps> = ({
         {previousRoundTeams.map(team => {
           const selected = isSelected(team);
           const disabled = !selected && reachedLimit;
+          const prob = winProbs && winProbs[team] !== undefined ? winProbs[team] : null;
+          const stats = teamStats && teamStats[team] ? teamStats[team] : null;
           return (
             <button
               key={team}
               onClick={() => onToggleTeam(team)}
               disabled={disabled}
-              className={`flex items-center justify-between p-3.5 rounded-none border text-left font-medium transition-all duration-200 hover:scale-[1.02] active:scale-95 ${
+              className={`flex items-center justify-between p-3.5 rounded-none border text-left font-medium transition-all duration-200 hover:scale-[1.02] active:scale-95 relative overflow-hidden ${
                 selected
                   ? "bg-green-600 border-green-600 text-white shadow-sm shadow-green-600/20"
                   : disabled
@@ -66,22 +75,44 @@ export const RoundColumn: React.FC<RoundColumnProps> = ({
                 ) : (
                   <span className="mr-2 text-base">🏳️</span>
                 )}
-                <span className="font-semibold text-sm truncate">{team}</span>
+                <span className="flex flex-col text-left overflow-hidden">
+                  <span className="font-semibold text-sm truncate">{team}</span>
+                  {selected && stats && (
+                    <span className="text-[9px] text-emerald-100 font-semibold tracking-wide uppercase opacity-90 truncate">
+                      {getFriendlyGoalDiffText(stats.avg_goal_diff)}
+                    </span>
+                  )}
+                </span>
               </span>
-              {selected && (
-                <svg
-                  className="w-4 h-4 text-white shrink-0 ml-1.5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2.5}
-                    d="M5 13l4 4L19 7"
+              <div className="flex items-center gap-1.5 shrink-0 ml-1.5">
+                {selected && prob !== null && (
+                  <span className="text-[9px] bg-black/20 dark:bg-black/30 px-1 py-0.5 rounded-sm font-bold text-white">
+                    {(prob * 100).toFixed(0)}%
+                  </span>
+                )}
+                {selected && (
+                  <svg
+                    className="w-4 h-4 text-white shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2.5}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                )}
+              </div>
+              {selected && prob !== null && (
+                <div className="absolute bottom-0 left-0 w-full h-1 bg-black/10 dark:bg-black/25">
+                  <div
+                    className="h-full bg-emerald-300 dark:bg-emerald-400 transition-all duration-500"
+                    style={{ width: `${prob * 100}%` }}
                   />
-                </svg>
+                </div>
               )}
             </button>
           );

@@ -26,7 +26,7 @@ export const BracketNavigation: React.FC<BracketNavigationProps> = ({
   getTabUnlockedStatus,
 }) => {
   return (
-    <div className="border-b border-neutral-200 dark:border-neutral-800 overflow-x-auto scrollbar-hide">
+    <div className="border-b border-neutral-200 dark:border-neutral-800 overflow-x-auto custom-scrollbar">
       <nav className="flex whitespace-nowrap" aria-label="Bracket Navigation">
         {NAVIGATION_TABS.map((tab) => {
           const isUnlocked = getTabUnlockedStatus(tab.id);

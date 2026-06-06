@@ -1,8 +1,20 @@
 import React, { useState, useCallback } from "react";
 
 // Max 100 runs in production to protect Railway CPU budget ($5/month)
+// Max 100 runs in production to protect Railway CPU budget ($5/month)
+// Up to 10,000 runs allowed locally (localhost or 127.0.0.1)
+const getApiLimit = () => {
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    if (hostname === "localhost" || hostname === "127.0.0.1") {
+      return 10000;
+    }
+  }
+  return 100;
+};
+
 const PRESET_RUNS = [1, 10, 50, 100];
-const MAX_CUSTOM_RUNS = 100;
+const MAX_CUSTOM_RUNS = getApiLimit();
 
 interface SimRunsSelectorProps {
   simRuns: number;
@@ -28,8 +40,8 @@ export const SimRunsSelector: React.FC<SimRunsSelectorProps> = ({
       const raw = e.target.value.replace(/\D/g, "");
       setCustomRuns(raw);
       const parsed = parseInt(raw, 10);
-      if (!isNaN(parsed) && parsed >= 1 && parsed <= MAX_CUSTOM_RUNS) {
-        setSimRuns(Math.min(parsed, MAX_CUSTOM_RUNS));
+      if (!isNaN(parsed) && parsed >= 1 && parsed <= getApiLimit()) {
+        setSimRuns(Math.min(parsed, getApiLimit()));
       }
     },
     [setSimRuns]

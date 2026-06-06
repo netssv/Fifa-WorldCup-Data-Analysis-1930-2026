@@ -7,10 +7,11 @@ import {
   isRoundComplete,
   getAvailableTeams,
   cleanDependencies,
-  getTabUnlockedStatus
+  getTabUnlockedStatus,
+  applySimulationData
 } from "../lib/bracketLogic";
 import { saveBracket, loadBracket, exportBracket } from "../lib/bracketStore";
-import { fetchFullBracket } from "../lib/apiClient";
+import { fetchFullBracketStreaming } from "../lib/apiClient";
 
 export const useFifaBracket = () => {
   const [state, setState] = useState<BracketState>(INITIAL_STATE);
@@ -23,7 +24,11 @@ export const useFifaBracket = () => {
   const [boostAmount, setBoostAmount] = useState<number>(0);
   const [simRuns, setSimRuns] = useState<number>(1);
   const [winProbs, setWinProbs] = useState<Record<string, number> | null>(null);
+  const [teamStats, setTeamStats] = useState<Record<string, { avg_goals_scored: number; avg_goals_conceded: number; avg_goal_diff: number }> | null>(null);
   const [simRunsTotal, setSimRunsTotal] = useState<number>(1);
+  const [lastSimScope, setLastSimScope] = useState<Round | "all">("all");
+  // Real-time simulation progress from SSE stream
+  const [simProgress, setSimProgress] = useState<{ current: number; total: number }>({ current: 0, total: 1 });
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -113,51 +118,40 @@ export const useFifaBracket = () => {
     exportBracket(userName, state);
   };
 
-  const handleAiAutoFill = async (upToRound: Round | "all" = "all") => {
-    try {
-      setAiLoading(true);
-      setWinProbs(null);
-      const data = await fetchFullBracket(
-        chaosFactor,
-        boostTeam || undefined,
-        boostAmount || undefined,
-        simRuns
-      );
-      if (data) {
-        if (data.win_probabilities && Object.keys(data.win_probabilities).length > 0) {
-          setWinProbs(data.win_probabilities);
-          setSimRunsTotal(simRuns);
-        }
+  const handleAiAutoFill = (selectedScope: Round | "all" = "all") => {
+    setLastSimScope(selectedScope);
+    setAiLoading(true);
+    setWinProbs(null);
+    setSimProgress({ current: 0, total: simRuns });
 
-        setState(prev => {
-          const groups: Record<string, string[]> = { ...prev.groups };
-          if (upToRound === "all" || upToRound === "groups" || ["r32", "r16", "r8", "semi", "final"].includes(upToRound)) {
-            for (const [groupName, groupData] of Object.entries(data.groups)) {
-              groups[groupName] = Array.isArray(groupData)
-                ? groupData
-                : (groupData as any).qualifiers || [];
-            }
+    fetchFullBracketStreaming(
+      chaosFactor,
+      boostTeam || undefined,
+      boostAmount || undefined,
+      simRuns,
+      selectedScope,
+      {
+        onProgress: (current, total) => {
+          setSimProgress({ current, total });
+        },
+        onResult: (data) => {
+          if (data.win_probabilities && Object.keys(data.win_probabilities).length > 0) {
+            setWinProbs(data.win_probabilities);
+            setSimRunsTotal(simRuns);
+          } else {
+            setWinProbs(null);
           }
-
-          const newState = {
-            ...prev,
-            groups,
-            r32: (upToRound === "all" || ["r32", "r16", "r8", "semi", "final"].includes(upToRound)) ? data.r32 : prev.r32,
-            r16: (upToRound === "all" || ["r16", "r8", "semi", "final"].includes(upToRound)) ? data.r16 : prev.r16,
-            r8: (upToRound === "all" || ["r8", "semi", "final"].includes(upToRound)) ? data.r8 : prev.r8,
-            semi: (upToRound === "all" || ["semi", "final"].includes(upToRound)) ? data.semi : prev.semi,
-            final: (upToRound === "all" || upToRound === "final") ? data.final : prev.final
-          };
-
-          return cleanDependencies(newState);
-        });
+          setTeamStats(data.team_stats || null);
+          setState(prev => applySimulationData(prev, data, selectedScope));
+          setAiLoading(false);
+        },
+        onError: (err) => {
+          console.error("AI Auto-Fill stream error:", err);
+          alert("Failed to fetch AI bracket predictions. Make sure the API is running.");
+          setAiLoading(false);
+        },
       }
-    } catch (err) {
-      console.error("AI Auto-Fill error:", err);
-      alert("Failed to fetch AI bracket predictions. Make sure the API is running.");
-    } finally {
-      setAiLoading(false);
-    }
+    );
   };
 
   const checkTabUnlocked = (tabId: Round | "summary" | "ai_lab"): boolean => {
@@ -193,6 +187,9 @@ export const useFifaBracket = () => {
     simRuns,
     setSimRuns,
     winProbs,
+    teamStats,
     simRunsTotal,
+    lastSimScope,
+    simProgress,
   };
 };

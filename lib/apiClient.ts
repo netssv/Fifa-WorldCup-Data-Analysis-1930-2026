@@ -1,3 +1,15 @@
+import {
+  Stage,
+  MatchPrediction,
+  GroupPrediction,
+  FullBracket,
+  MatchOverrides,
+  TeamPathPrediction,
+  StreamCallbacks,
+} from "./apiTypes";
+
+export * from "./apiTypes";
+
 const getApiUrl = (): string => {
   // 1st priority: explicit env var (always use this in production/Vercel)
   const envUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -5,7 +17,6 @@ const getApiUrl = (): string => {
     return envUrl;
   }
   // 2nd priority (browser-only): derive from current hostname for local network dev
-  // This lets any device on the LAN reach the API without extra config
   if (typeof window !== "undefined") {
     const hostname = window.location.hostname;
     // If it's a real IP or local domain (not localhost), use port 8000 on same host
@@ -18,58 +29,6 @@ const getApiUrl = (): string => {
 };
 
 const API_BASE = getApiUrl();
-
-export type Stage = "group" | "r32" | "r16" | "r8" | "semi" | "final";
-
-// ── Types ─────────────────────────────────────────────────────────────
-export interface MatchPrediction {
-  team_a: string;
-  team_b: string;
-  team_a_win_prob: number;
-  draw_prob: number;
-  team_b_win_prob: number;
-  predicted_winner: string;
-  confidence: "high" | "medium" | "low";
-  confidence_score: number;
-  goals_a?: number;
-  goals_b?: number;
-  model_features: {
-    elo_diff: number;
-    team_a_form: number;
-    team_b_form: number;
-    h2h_wins_a: number;
-  };
-}
-
-export interface GroupRanking {
-  team: string;
-  qualify_prob: number;
-  rank: number;
-}
-
-export interface GroupPrediction {
-  group: string;
-  rankings: GroupRanking[];
-  suggested_qualifiers: [string, string];
-}
-
-export interface FullBracket {
-  groups: Record<
-    string,
-    | {
-        qualifiers: [string, string];
-        probs: Record<string, number>;
-        match_probs: Record<string, { win_a: number; draw: number; win_b: number }>;
-      }
-    | string[]
-  >;
-  r32: string[];
-  r16: string[];
-  r8: string[];
-  semi: string[];
-  final: string;
-  win_probabilities: Record<string, number>;
-}
 
 // ── Fetch helpers ─────────────────────────────────────────────────────
 async function post<T>(path: string, body: unknown): Promise<T> {
@@ -89,19 +48,6 @@ async function get<T>(path: string): Promise<T> {
 }
 
 // ── Public API ────────────────────────────────────────────────────────
-export interface MatchOverrides {
-  elo_a_override?: number;
-  elo_b_override?: number;
-  form_a_override?: number;
-  form_b_override?: number;
-  penalty_a_override?: number;
-  penalty_b_override?: number;
-  big_match_a_override?: number;
-  big_match_b_override?: number;
-  knockout_a_override?: number;
-  knockout_b_override?: number;
-}
-
 export const predictMatch = (
   team_a: string,
   team_b: string,
@@ -116,35 +62,107 @@ export const predictGroup = (
 ): Promise<GroupPrediction> =>
   post<GroupPrediction>("/predict/group", { group_name, teams });
 
+export interface DataSourceStatus {
+  loaded: boolean;
+  teams: number;
+  label: string;
+}
+export interface DataSourcesResponse {
+  squad_value: DataSourceStatus;
+  ea_fc_ratings: DataSourceStatus;
+  xg_stats: DataSourceStatus;
+  market_odds: DataSourceStatus;
+  coach_exp: DataSourceStatus;
+  fatigue: DataSourceStatus;
+  pressure: DataSourceStatus;
+  models_loaded: boolean;
+}
+export const fetchDataSources = (): Promise<DataSourcesResponse> =>
+  get<DataSourcesResponse>("/data-sources");
+
 export const fetchFullBracket = (
   chaosFactor?: number,
   boostTeam?: string,
   boostAmount?: number,
-  simRuns?: number
+  simRuns?: number,
+  scope?: string
 ): Promise<FullBracket> => {
   const params = new URLSearchParams();
   if (chaosFactor !== undefined) params.append("chaos_factor", String(chaosFactor));
   if (boostTeam) params.append("boost_team", boostTeam);
   if (boostAmount !== undefined) params.append("boost_amount", String(boostAmount));
   if (simRuns !== undefined) params.append("sim_runs", String(simRuns));
+  if (scope && scope !== "all") params.append("scope", scope);
   const query = params.toString() ? `?${params.toString()}` : "";
   return get<FullBracket>(`/predict/bracket/full${query}`);
 };
 
-export interface TeamPathPrediction {
-  team: string;
-  group: string;
-  elo: number;
-  form: number;
-  path: {
-    qualify_from_group: number;
-    reach_r16: number;
-    reach_quarterfinals: number;
-    reach_semifinals: number;
-    reach_final: number;
-    win_tournament: number;
-  };
-}
-
 export const fetchTeamPath = (team: string): Promise<TeamPathPrediction> =>
   post<TeamPathPrediction>("/predict/team-path", { team });
+
+// ── Streaming (SSE) bracket fetch ─────────────────────────────────────
+export function fetchFullBracketStreaming(
+  chaosFactor: number = 0,
+  boostTeam: string | undefined,
+  boostAmount: number = 0,
+  simRuns: number = 1,
+  scope: string = "all",
+  callbacks: StreamCallbacks,
+): () => void {
+  const params = new URLSearchParams();
+  if (chaosFactor) params.append("chaos_factor", String(chaosFactor));
+  if (boostTeam)   params.append("boost_team", boostTeam);
+  if (boostAmount) params.append("boost_amount", String(boostAmount));
+  params.append("sim_runs", String(simRuns));
+  if (scope && scope !== "all") params.append("scope", scope);
+
+  const url = `${API_BASE}/predict/bracket/stream?${params.toString()}`;
+  let cancelled = false;
+
+  (async () => {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`Stream API error: ${response.status}`);
+      if (!response.body) throw new Error("No response body for SSE stream");
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (!cancelled) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith("data:")) continue;
+          const json = trimmed.slice(5).trim();
+          if (!json) continue;
+
+          try {
+            const event = JSON.parse(json);
+            if (event.type === "progress") {
+              callbacks.onProgress(event.current, event.total);
+            } else if (event.type === "result") {
+              callbacks.onResult(event as FullBracket);
+            }
+          } catch {
+            // Ignore malformed JSON lines
+          }
+        }
+      }
+
+      reader.cancel();
+    } catch (err) {
+      if (!cancelled) {
+        callbacks.onError?.(err instanceof Error ? err : new Error(String(err)));
+      }
+    }
+  })();
+
+  return () => { cancelled = true; };
+}

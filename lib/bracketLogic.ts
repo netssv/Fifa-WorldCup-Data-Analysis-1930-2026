@@ -127,4 +127,54 @@ export function padArray(arr: string[], len: number): string[] {
   return padded;
 }
 
+export function applySimulationData(
+  state: BracketState,
+  data: any,
+  scope: Round | "all"
+): BracketState {
+  if (scope === "all") {
+    const groups: Record<string, string[]> = {};
+    for (const [groupName, groupData] of Object.entries(data.groups)) {
+      groups[groupName] = Array.isArray(groupData)
+        ? groupData
+        : (groupData as any).qualifiers || [];
+    }
+    return cleanDependencies({
+      ...state,
+      groups,
+      r32: data.r32 || [],
+      r16: data.r16 || [],
+      r8: data.r8 || [],
+      semi: data.semi || [],
+      final: data.final || "",
+    });
+  }
+
+  if (scope === "groups") {
+    const groups: Record<string, string[]> = {};
+    for (const [groupName, groupData] of Object.entries(data.groups)) {
+      groups[groupName] = Array.isArray(groupData)
+        ? groupData
+        : (groupData as any).qualifiers || [];
+    }
+    return cleanDependencies({ ...state, groups });
+  }
+
+  if (scope === "r32") return cleanDependencies({ ...state, r32: data.r32 || [] });
+  if (scope === "r16") return cleanDependencies({ ...state, r16: data.r16 || [] });
+  if (scope === "r8") return cleanDependencies({ ...state, r8: data.r8 || [] });
+  if (scope === "semi") return cleanDependencies({ ...state, semi: data.semi || [] });
+  if (scope === "final") return cleanDependencies({ ...state, final: data.final || "" });
+
+  return state;
+}
+
+export function getFriendlyGoalDiffText(diff: number): string {
+  if (diff >= 1.5) return "🔥 Heavy Favorite";
+  if (diff >= 0.8) return "⭐ Favorite";
+  if (diff >= 0.3) return "⚖️ Slight Favorite";
+  return "🎲 Coin Toss";
+}
+
+
 

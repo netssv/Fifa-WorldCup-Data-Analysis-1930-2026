@@ -29,7 +29,7 @@ export const HeaderActionButtons: React.FC<HeaderActionButtonsProps> = ({
   onSave,
   onReset,
 }) => (
-  <div className="grid grid-cols-3 gap-2 w-full">
+  <div className="grid grid-cols-3 sm:flex gap-2 w-full sm:w-auto">
     {/* Theme Toggle */}
     <button
       onClick={onToggleTheme}

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { TEAM_FLAGS } from "../lib/bracketData";
 import { predictGroup } from "../lib/apiClient";
+import { getFriendlyGoalDiffText } from "../lib/bracketLogic";
 
 interface GroupCardProps {
   groupName: string;
@@ -8,6 +9,11 @@ interface GroupCardProps {
   selectedTeams: string[];
   onSelectTeam: (teamName: string) => void;
   onSetQualifiers?: (groupName: string, teamNames: string[]) => void;
+  winProbs?: Record<string, number> | null;
+  teamStats?: Record<
+    string,
+    { avg_goals_scored: number; avg_goals_conceded: number; avg_goal_diff: number }
+  > | null;
 }
 
 export const GroupCard: React.FC<GroupCardProps> = ({
@@ -15,7 +21,9 @@ export const GroupCard: React.FC<GroupCardProps> = ({
   teams,
   selectedTeams = [],
   onSelectTeam,
-  onSetQualifiers
+  onSetQualifiers,
+  winProbs,
+  teamStats
 }) => {
   const [loading, setLoading] = useState(false);
   const isSelected = (team: string) => selectedTeams.includes(team);
@@ -71,13 +79,15 @@ export const GroupCard: React.FC<GroupCardProps> = ({
           const selected = isSelected(team);
           const disabled = !selected && reachedLimit;
           const flag = TEAM_FLAGS[team];
+          const prob = winProbs && winProbs[team] !== undefined ? winProbs[team] : null;
+          const stats = teamStats && teamStats[team] ? teamStats[team] : null;
 
           return (
             <button
               key={team}
               onClick={() => onSelectTeam(team)}
               disabled={disabled}
-              className={`w-full flex items-center justify-between p-3 rounded-none border text-left font-medium transition-all duration-200 hover:scale-[1.02] active:scale-95 ${
+              className={`w-full flex items-center justify-between p-3 rounded-none border text-left font-medium transition-all duration-200 hover:scale-[1.02] active:scale-95 relative overflow-hidden ${
                 selected
                   ? "bg-green-600 border-green-600 text-white shadow-sm"
                   : disabled
@@ -91,22 +101,44 @@ export const GroupCard: React.FC<GroupCardProps> = ({
                 ) : (
                   <span className="text-xl">🏳️</span>
                 )}
-                <span>{team}</span>
+                <span className="flex flex-col text-left">
+                  <span>{team}</span>
+                  {selected && stats && (
+                    <span className="text-[9px] text-emerald-100 font-semibold tracking-wide uppercase opacity-90">
+                      {getFriendlyGoalDiffText(stats.avg_goal_diff)}
+                    </span>
+                  )}
+                </span>
               </span>
-              {selected && (
-                <svg
-                  className="w-5 h-5 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
+              <div className="flex items-center gap-2">
+                {selected && prob !== null && (
+                  <span className="text-[10px] bg-black/20 dark:bg-black/30 px-1.5 py-0.5 rounded-sm font-bold text-white">
+                    {(prob * 100).toFixed(1)}%
+                  </span>
+                )}
+                {selected && (
+                  <svg
+                    className="w-5 h-5 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                )}
+              </div>
+              {selected && prob !== null && (
+                <div className="absolute bottom-0 left-0 w-full h-1 bg-black/10 dark:bg-black/25">
+                  <div
+                    className="h-full bg-emerald-300 dark:bg-emerald-400 transition-all duration-500"
+                    style={{ width: `${prob * 100}%` }}
                   />
-                </svg>
+                </div>
               )}
             </button>
           );

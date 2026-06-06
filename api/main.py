@@ -5,19 +5,23 @@ Endpoints:
   POST /predict/group       — group-stage qualifying probabilities
   POST /predict/team-path   — round-by-round advancement probability
   GET  /predict/bracket/full — full simulated tournament bracket
+                               ?scope=all|groups|r32|r16|r8|semi|final
 """
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 
 from .model_loader import _models_loaded
 from .predictions import predict_with_model, goals_to_probs, _get_elo, _get_form, _get_h2h, _confidence_label
 from .constants import GROUPS_2026
 from .bracket_sim import simulate_full_bracket
+from .bracket_sim_stream import simulate_bracket_stream
 from .team_path import compute_team_path
 from .schemas import MatchRequest, GroupRequest, TeamPathRequest
 
 import os
+import json
 
 app = FastAPI(
     title="FIFA 2026 Prediction API",
@@ -52,6 +56,25 @@ async def root():
         "version": "1.0.0",
         "models_loaded": _models_loaded,
         "endpoints": ["/predict/match", "/predict/group", "/predict/bracket/full"],
+    }
+
+
+@app.get("/data-sources")
+async def data_sources():
+    """Returns which feature datasets are actually loaded and how many teams each covers."""
+    from .model_loader import (
+        _squad_values, _eafc_ratings, _xg_features,
+        _odds_features, _coach_features, _fatigue_features, _pressure_features,
+    )
+    return {
+        "squad_value":    {"loaded": len(_squad_values) > 0,   "teams": len(_squad_values),   "label": "Transfermarkt squad values"},
+        "ea_fc_ratings":  {"loaded": len(_eafc_ratings) > 0,   "teams": len(_eafc_ratings),   "label": "EA FC top-23 player ratings"},
+        "xg_stats":       {"loaded": len(_xg_features) > 0,    "teams": len(_xg_features),    "label": "Expected goals (xG) parameters"},
+        "market_odds":    {"loaded": len(_odds_features) > 0,  "teams": len(_odds_features),  "label": "Bookmaker implied probabilities"},
+        "coach_exp":      {"loaded": len(_coach_features) > 0, "teams": len(_coach_features), "label": "Coach tenure & tournament records"},
+        "fatigue":        {"loaded": len(_fatigue_features) > 0,"teams": len(_fatigue_features),"label": "Match load & fatigue index"},
+        "pressure":       {"loaded": len(_pressure_features) > 0,"teams": len(_pressure_features),"label": "Penalty & big-match pressure rate"},
+        "models_loaded":  _models_loaded,
     }
 
 
@@ -132,12 +155,44 @@ async def predict_bracket_full(
     boost_team: str | None = None,
     boost_amount: float = 0.0,
     sim_runs: int = 1,
+    scope: str = "all",
 ):
     return await simulate_full_bracket(
         chaos_factor=chaos_factor,
         boost_team=boost_team,
         boost_amount=boost_amount,
         sim_runs=sim_runs,
+        scope=scope,
     )
 
 
+@app.get("/predict/bracket/stream")
+async def predict_bracket_stream(
+    chaos_factor: float = 0.0,
+    boost_team: str | None = None,
+    boost_amount: float = 0.0,
+    sim_runs: int = 1,
+    scope: str = "all",
+):
+    """Server-Sent Events endpoint that streams real per-run simulation progress.
+    Yields: data: {"type":"progress","current":N,"total":M}
+    Final:  data: {"type":"result", ...bracket_data}
+    """
+    async def event_generator():
+        async for event in simulate_bracket_stream(
+            chaos_factor=chaos_factor,
+            boost_team=boost_team,
+            boost_amount=boost_amount,
+            sim_runs=sim_runs,
+            scope=scope,
+        ):
+            yield f"data: {json.dumps(event)}\n\n"
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+        },
+    )
