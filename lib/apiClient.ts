@@ -85,7 +85,9 @@ export const fetchFullBracket = (
   boostTeam?: string,
   boostAmount?: number,
   simRuns?: number,
-  scope?: string
+  scope?: string,
+  useGoldman: boolean = true,
+  useKlement: boolean = true,
 ): Promise<FullBracket> => {
   const params = new URLSearchParams();
   if (chaosFactor !== undefined) params.append("chaos_factor", String(chaosFactor));
@@ -93,6 +95,8 @@ export const fetchFullBracket = (
   if (boostAmount !== undefined) params.append("boost_amount", String(boostAmount));
   if (simRuns !== undefined) params.append("sim_runs", String(simRuns));
   if (scope && scope !== "all") params.append("scope", scope);
+  params.append("use_goldman", String(useGoldman));
+  params.append("use_klement", String(useKlement));
   const query = params.toString() ? `?${params.toString()}` : "";
   return get<FullBracket>(`/predict/bracket/full${query}`);
 };
@@ -107,6 +111,8 @@ export function fetchFullBracketStreaming(
   boostAmount: number = 0,
   simRuns: number = 1,
   scope: string = "all",
+  useGoldman: boolean = true,
+  useKlement: boolean = true,
   callbacks: StreamCallbacks,
 ): () => void {
   const params = new URLSearchParams();
@@ -115,6 +121,8 @@ export function fetchFullBracketStreaming(
   if (boostAmount) params.append("boost_amount", String(boostAmount));
   params.append("sim_runs", String(simRuns));
   if (scope && scope !== "all") params.append("scope", scope);
+  params.append("use_goldman", String(useGoldman));
+  params.append("use_klement", String(useKlement));
 
   const url = `${API_BASE}/predict/bracket/stream?${params.toString()}`;
   let cancelled = false;

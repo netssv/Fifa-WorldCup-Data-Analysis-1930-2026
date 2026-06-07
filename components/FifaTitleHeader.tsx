@@ -38,12 +38,19 @@ const TimeUnit: React.FC<{ value: number; label: string }> = ({ value, label }) 
 
 /** Countdown timer to the opening kickoff */
 const CountdownTimer: React.FC = () => {
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft);
+  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
 
   useEffect(() => {
+    setTimeLeft(calculateTimeLeft());
     const timer = setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  if (!timeLeft) {
+    return (
+      <div className="mt-4 flex flex-col items-center gap-2 h-[52px]" aria-hidden="true" />
+    );
+  }
 
   if (timeLeft.started) {
     return (

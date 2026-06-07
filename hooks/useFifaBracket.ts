@@ -23,6 +23,9 @@ export const useFifaBracket = () => {
   const [boostTeam, setBoostTeam] = useState<string>("");
   const [boostAmount, setBoostAmount] = useState<number>(0);
   const [simRuns, setSimRuns] = useState<number>(1);
+  // Global model calibrator toggles — apply to all predictions and tournament sims
+  const [useGoldman, setUseGoldman] = useState<boolean>(true);
+  const [useKlement, setUseKlement] = useState<boolean>(true);
   const [winProbs, setWinProbs] = useState<Record<string, number> | null>(null);
   const [teamStats, setTeamStats] = useState<Record<string, { avg_goals_scored: number; avg_goals_conceded: number; avg_goal_diff: number }> | null>(null);
   const [simRunsTotal, setSimRunsTotal] = useState<number>(1);
@@ -130,6 +133,8 @@ export const useFifaBracket = () => {
       boostAmount || undefined,
       simRuns,
       selectedScope,
+      useGoldman,
+      useKlement,
       {
         onProgress: (current, total) => {
           setSimProgress({ current, total });
@@ -186,6 +191,10 @@ export const useFifaBracket = () => {
     setBoostAmount,
     simRuns,
     setSimRuns,
+    useGoldman,
+    setUseGoldman,
+    useKlement,
+    setUseKlement,
     winProbs,
     teamStats,
     simRunsTotal,

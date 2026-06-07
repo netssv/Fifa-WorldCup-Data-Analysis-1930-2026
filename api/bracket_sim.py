@@ -28,6 +28,9 @@ async def simulate_full_bracket(
     boost_amount: float = 0.0,
     sim_runs: int = 1,
     scope: SimScope = "all",
+    use_goldman: bool = True,
+    use_klement: bool = True,
+    seed: int | None = None,
 ) -> dict:
     global _bracket_cache, _bracket_cache_ts
 
@@ -35,7 +38,7 @@ async def simulate_full_bracket(
     is_custom = chaos_factor > 0.0 or (boost_team is not None and boost_amount > 0.0) or sim_runs > 1
 
     is_railway = "RAILWAY_STATIC_URL" in os.environ or "RAILWAY_ENVIRONMENT" in os.environ
-    max_runs = 100 if is_railway else 10000
+    max_runs = 100 if is_railway else 1000000
     effective_runs = max(1, min(max_runs, sim_runs))
 
     now = time.monotonic()
@@ -47,7 +50,10 @@ async def simulate_full_bracket(
         effective_runs=effective_runs,
         chaos_factor=chaos_factor,
         boost_team=boost_team,
-        boost_amount=boost_amount
+        boost_amount=boost_amount,
+        use_goldman=use_goldman,
+        use_klement=use_klement,
+        seed=seed,
     )
 
     all_results = []

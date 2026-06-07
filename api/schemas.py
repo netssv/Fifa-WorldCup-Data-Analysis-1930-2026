@@ -16,6 +16,9 @@ class MatchRequest(BaseModel):
     big_match_b_override: float | None = None
     knockout_a_override: float | None = None
     knockout_b_override: float | None = None
+    # Model/Calibrator Toggles
+    use_goldman: bool = True
+    use_klement: bool = True
 
 
 class GroupRequest(BaseModel):

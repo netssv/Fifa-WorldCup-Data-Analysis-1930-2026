@@ -16,6 +16,8 @@ interface OverridesProps {
   bigMatchB: number; setBigMatchB: (val: number) => void;
   knockoutA: number; setKnockoutA: (val: number) => void;
   knockoutB: number; setKnockoutB: (val: number) => void;
+  useGoldman: boolean; setUseGoldman: (val: boolean) => void;
+  useKlement: boolean; setUseKlement: (val: boolean) => void;
   isAutoFilling: boolean;
   autoFillError: string;
   onAutoFill: () => void;

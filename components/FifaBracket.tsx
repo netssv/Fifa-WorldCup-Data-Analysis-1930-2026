@@ -34,6 +34,8 @@ export const FifaBracket: React.FC = () => {
     boostTeam, setBoostTeam,
     boostAmount, setBoostAmount,
     simRuns, setSimRuns,
+    useGoldman, setUseGoldman,
+    useKlement, setUseKlement,
     winProbs, teamStats, simRunsTotal, lastSimScope,
     simProgress,
   } = useFifaBracket();
@@ -68,6 +70,10 @@ export const FifaBracket: React.FC = () => {
         setBoostAmount={setBoostAmount}
         simRuns={simRuns}
         setSimRuns={setSimRuns}
+        useGoldman={useGoldman}
+        setUseGoldman={setUseGoldman}
+        useKlement={useKlement}
+        setUseKlement={setUseKlement}
         isDark={isDark}
         onToggleTheme={handleToggleTheme}
         simProgress={simProgress}
@@ -159,7 +165,14 @@ export const FifaBracket: React.FC = () => {
           </div>
         )}
 
-        {activeTab === "ai_lab" && <AiLab />}
+        {activeTab === "ai_lab" && (
+          <AiLab
+            useGoldman={useGoldman}
+            setUseGoldman={setUseGoldman}
+            useKlement={useKlement}
+            setUseKlement={setUseKlement}
+          />
+        )}
       </main>
 
       {/* ── Bottom Navigation ── */}

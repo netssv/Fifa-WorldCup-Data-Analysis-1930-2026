@@ -23,10 +23,11 @@ _odds_features: dict[str, dict[str, float]] = {}
 _coach_features: dict[str, dict] = {}
 _fatigue_features: dict[str, dict] = {}
 _pressure_features: dict[str, dict[str, float]] = {}
+_macro_features: dict[str, dict[str, float]] = {}
 
 
 def _load_extra_features() -> None:
-    global _squad_values, _eafc_ratings, _xg_features, _odds_features, _coach_features, _fatigue_features, _pressure_features
+    global _squad_values, _eafc_ratings, _xg_features, _odds_features, _coach_features, _fatigue_features, _pressure_features, _macro_features
     squad_path = BASE_DIR / "data" / "processed" / "squad_values_2026.csv"
     eafc_path = BASE_DIR / "data" / "processed" / "eafc_ratings_2026.csv"
     xg_path = BASE_DIR / "data" / "processed" / "xg_features_2026.csv"
@@ -132,6 +133,19 @@ def _load_extra_features() -> None:
             print(f"[INFO] Pressure features loaded: {len(_pressure_features)} teams")
         except Exception as exc:
             print(f"[WARN] Could not load pressure features: {exc}")
+
+    macro_path = BASE_DIR / "data" / "raw" / "macroeconomics.csv"
+    if macro_path.exists():
+        try:
+            df = pd.read_csv(macro_path)
+            for _, row in df.iterrows():
+                _macro_features[row["team_name"]] = {
+                    "gdp_per_capita_ppp": float(row["gdp_per_capita_ppp"]),
+                    "population": float(row["population"]),
+                }
+            print(f"[INFO] Macroeconomic features loaded: {len(_macro_features)} teams")
+        except Exception as exc:
+            print(f"[WARN] Could not load macroeconomic features: {exc}")
 
 
 def _load_models() -> bool:

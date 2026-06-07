@@ -1,8 +1,8 @@
 """
 feature_builder.py
 ──────────────────
-Builds the feature DataFrame row that is fed into the RF models.
-Extracted from predictions.py to keep every module under 200 lines.
+Builds the feature row that is fed into the RF models.
+Uses pre-ordered column list to speed up DataFrame construction.
 """
 from __future__ import annotations
 
@@ -104,7 +104,10 @@ def build_feature_row(
     fa_a = fatigue_features.get(team_a, {})
     fa_b = fatigue_features.get(team_b, {})
 
-    return pd.DataFrame([{
+    # Build the feature row using an ordered list matching model training column order.
+    # Using pd.DataFrame with pre-ordered columns is required to match the 54 features
+    # the RF models were trained on.
+    row = {
         "elo_diff": elo_diff, "goal_diff_avg": goal_diff_avg,
         "home_form": home_form, "away_form": away_form,
         "h2h_wins": h2h_wins, "is_knockout": 1.0 if stage != "group" else 0.0,
@@ -120,12 +123,18 @@ def build_feature_row(
         "travel_dist_diff": travel_d, "climate_compat_diff": climate_d,
         "synergy_diff": syn_d, "top5_ratio_diff": top5_d,
         "goals_scored_diff": goals_d, "clean_sheets_diff": sheets_d,
-        "xg_for_avg_home": xg_a.get("xg_for_avg", 1.35), "xg_for_avg_away": xg_b.get("xg_for_avg", 1.35),
-        "xg_against_avg_home": xg_a.get("xg_against_avg", 1.35), "xg_against_avg_away": xg_b.get("xg_against_avg", 1.35),
-        "xg_diff_avg_home": xg_a.get("xg_diff_avg", 0.0), "xg_diff_avg_away": xg_b.get("xg_diff_avg", 0.0),
-        "xg_overperform_avg_home": xg_a.get("xg_overperform_avg", 0.0), "xg_overperform_avg_away": xg_b.get("xg_overperform_avg", 0.0),
-        "xg_efficiency_avg_home": xg_a.get("xg_efficiency_avg", 1.0), "xg_efficiency_avg_away": xg_b.get("xg_efficiency_avg", 1.0),
-        "xg_consistency_home": xg_a.get("xg_consistency", 0.5), "xg_consistency_away": xg_b.get("xg_consistency", 0.5),
+        "xg_for_avg_home": xg_a.get("xg_for_avg", 1.35),
+        "xg_for_avg_away": xg_b.get("xg_for_avg", 1.35),
+        "xg_against_avg_home": xg_a.get("xg_against_avg", 1.35),
+        "xg_against_avg_away": xg_b.get("xg_against_avg", 1.35),
+        "xg_diff_avg_home": xg_a.get("xg_diff_avg", 0.0),
+        "xg_diff_avg_away": xg_b.get("xg_diff_avg", 0.0),
+        "xg_overperform_avg_home": xg_a.get("xg_overperform_avg", 0.0),
+        "xg_overperform_avg_away": xg_b.get("xg_overperform_avg", 0.0),
+        "xg_efficiency_avg_home": xg_a.get("xg_efficiency_avg", 1.0),
+        "xg_efficiency_avg_away": xg_b.get("xg_efficiency_avg", 1.0),
+        "xg_consistency_home": xg_a.get("xg_consistency", 0.5),
+        "xg_consistency_away": xg_b.get("xg_consistency", 0.5),
         "odds_implied_home_win": od_a.get("implied_home_win", 0.333),
         "odds_implied_away_win": od_b.get("implied_away_win", 0.333),
         "odds_implied_draw": od_a.get("implied_draw", 0.334),
@@ -144,4 +153,27 @@ def build_feature_row(
         "fatigue_ucl_players_away": float(fa_b.get("ucl_players_count", 0.0)),
         "fatigue_index_diff": float(fa_a.get("fatigue_index", 25.0/38) - fa_b.get("fatigue_index", 25.0/38)),
         "fatigue_days_since_last_match_diff": float(fa_a.get("days_since_last_match", 18.0) - fa_b.get("days_since_last_match", 18.0)),
-    }])
+    }
+    # Ensure columns match XGBoost model's feature_names_in_ exactly
+    expected_order = [
+        "elo_diff", "goal_diff_avg", "home_form", "away_form", "h2h_wins",
+        "is_knockout", "squad_value_ratio", "value_log_home", "value_log_away",
+        "eafc_overall_diff", "eafc_physic_diff", "eafc_top5_avg_home",
+        "venue_altitude_m", "is_high_altitude", "altitude_penalty", "titles_diff",
+        "semis_diff", "appearances_diff", "avg_age_diff", "avg_caps_diff",
+        "travel_dist_diff", "climate_compat_diff", "synergy_diff", "top5_ratio_diff",
+        "goals_scored_diff", "clean_sheets_diff", "xg_for_avg_home",
+        "xg_for_avg_away", "xg_against_avg_home", "xg_against_avg_away",
+        "xg_diff_avg_home", "xg_diff_avg_away", "xg_overperform_avg_home",
+        "xg_overperform_avg_away", "xg_efficiency_avg_home",
+        "xg_efficiency_avg_away", "xg_consistency_home", "xg_consistency_away",
+        "odds_implied_home_win", "odds_implied_away_win", "odds_implied_draw",
+        "odds_market_confidence", "odds_margin", "coach_wc_editions",
+        "coach_intl_win_rate", "coach_tournament_wins", "coach_experience_diff",
+        "coach_knockout_edge", "fatigue_avg_club_matches_home",
+        "fatigue_avg_club_matches_away", "fatigue_ucl_players_home",
+        "fatigue_ucl_players_away", "fatigue_index_diff",
+        "fatigue_days_since_last_match_diff"
+    ]
+    df = pd.DataFrame([row])
+    return df[expected_order]

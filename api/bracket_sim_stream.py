@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+import warnings
 from typing import AsyncGenerator, Any
 
 from .constants import GROUPS_2026
@@ -21,18 +22,61 @@ from .bracket_sim import SimScope
 SimScope = str  # re-export for clarity
 
 
+def _prewarm_group_cache(boost_team: str | None, boost_amount: float, use_goldman: bool, use_klement: bool) -> None:
+    """Pre-compute all 72 fixed group-stage match predictions into cache.
+
+    Group teams never change between simulation runs, so this eliminates
+    repeated RF model calls for the most frequent matchups.
+    """
+    from .predictions import predict_with_model
+    for teams in GROUPS_2026.values():
+        for i, ta in enumerate(teams):
+            for tb in teams[i + 1:]:
+                elo_a = None
+                form_a = None
+                elo_b = None
+                form_b = None
+                if boost_team:
+                    from .bracket_sim import _get_elo, _get_form
+                    if ta == boost_team:
+                        elo_a  = _get_elo(ta) + boost_amount
+                        form_a = min(0.99, _get_form(ta) + (boost_amount / 500.0))
+                    if tb == boost_team:
+                        elo_b  = _get_elo(tb) + boost_amount
+                        form_b = min(0.99, _get_form(tb) + (boost_amount / 500.0))
+                predict_with_model(
+                    ta, tb, "group",
+                    elo_a_override=elo_a, elo_b_override=elo_b,
+                    form_a_override=form_a, form_b_override=form_b,
+                    use_goldman=use_goldman,
+                    use_klement=use_klement,
+                )
+
+
 async def simulate_bracket_stream(
     chaos_factor: float = 0.0,
     boost_team: str | None = None,
     boost_amount: float = 0.0,
     sim_runs: int = 1,
     scope: str = "all",
+    use_goldman: bool = True,
+    use_klement: bool = True,
+    seed: int | None = None,
 ) -> AsyncGenerator[dict[str, Any], None]:
     """Async generator that streams simulation progress events then final result."""
 
     is_railway = "RAILWAY_STATIC_URL" in os.environ or "RAILWAY_ENVIRONMENT" in os.environ
-    max_runs = 100 if is_railway else 10_000
+    max_runs = 100 if is_railway else 1000000
     effective_runs = max(1, min(max_runs, sim_runs))
+
+    # Suppress sklearn feature-name warnings — we intentionally use numpy arrays
+    warnings.filterwarnings("ignore", message="X does not have valid feature names")
+
+    from .predictions import clear_prediction_cache
+    clear_prediction_cache()
+
+    # Pre-warm cache for all fixed group-stage matchups before simulating
+    _prewarm_group_cache(boost_team, boost_amount, use_goldman, use_klement)
 
     from .sim_runner import TournamentSimulator
 
@@ -41,20 +85,26 @@ async def simulate_bracket_stream(
         chaos_factor=chaos_factor,
         boost_team=boost_team,
         boost_amount=boost_amount,
+        use_goldman=use_goldman,
+        use_klement=use_klement,
+        seed=seed,
     )
 
     all_results: list[dict] = []
+
+    # Yield progress every ~2% (at most 50 events) to prevent blocking/network overhead
+    yield_interval = max(1, effective_runs // 50)
 
     for i in range(effective_runs):
         # Run one simulation synchronously (CPU-bound, but short per run)
         res = sim.run_single_simulation(stop_at=scope)
         all_results.append(res)
 
-        # Yield progress event
-        yield {"type": "progress", "current": i + 1, "total": effective_runs}
-
-        # Give the event loop a chance to flush every 5 runs (avoids blocking)
-        if (i + 1) % 5 == 0:
+        current_run = i + 1
+        # Yield progress event in batches
+        if current_run % yield_interval == 0 or current_run == effective_runs:
+            yield {"type": "progress", "current": current_run, "total": effective_runs}
+            # Give the event loop a chance to flush and handle async tasks
             await asyncio.sleep(0)
 
     # ── Aggregate probabilities ────────────────────────────────────────

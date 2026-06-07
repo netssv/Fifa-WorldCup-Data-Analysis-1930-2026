@@ -1,13 +1,12 @@
 import React, { useState, useCallback } from "react";
 
 // Max 100 runs in production to protect Railway CPU budget ($5/month)
-// Max 100 runs in production to protect Railway CPU budget ($5/month)
-// Up to 10,000 runs allowed locally (localhost or 127.0.0.1)
+// Up to 1,000,000 runs allowed locally (localhost or 127.0.0.1)
 const getApiLimit = () => {
   if (typeof window !== "undefined") {
     const hostname = window.location.hostname;
     if (hostname === "localhost" || hostname === "127.0.0.1") {
-      return 10000;
+      return 1000000;
     }
   }
   return 100;

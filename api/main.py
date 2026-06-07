@@ -14,6 +14,7 @@ from fastapi.responses import StreamingResponse
 
 from .model_loader import _models_loaded
 from .predictions import predict_with_model, goals_to_probs, _get_elo, _get_form, _get_h2h, _confidence_label
+from .evaluation import compute_benchmark_probs, get_feature_importance
 from .constants import GROUPS_2026
 from .bracket_sim import simulate_full_bracket
 from .bracket_sim_stream import simulate_bracket_stream
@@ -65,6 +66,7 @@ async def data_sources():
     from .model_loader import (
         _squad_values, _eafc_ratings, _xg_features,
         _odds_features, _coach_features, _fatigue_features, _pressure_features,
+        _macro_features,
     )
     return {
         "squad_value":    {"loaded": len(_squad_values) > 0,   "teams": len(_squad_values),   "label": "Transfermarkt squad values"},
@@ -75,7 +77,20 @@ async def data_sources():
         "fatigue":        {"loaded": len(_fatigue_features) > 0,"teams": len(_fatigue_features),"label": "Match load & fatigue index"},
         "pressure":       {"loaded": len(_pressure_features) > 0,"teams": len(_pressure_features),"label": "Penalty & big-match pressure rate"},
         "models_loaded":  _models_loaded,
+        "macro_data":     {"loaded": len(_macro_features) > 0, "teams": len(_macro_features), "label": "GDP per capita (PPP) & Population (World Bank)"},
     }
+
+
+@app.get("/model/calibration-metrics")
+async def get_calibration_metrics():
+    """Return model calibration metrics from the latest training run."""
+    metrics_path = os.path.join("Predictions and Models Folder", "calibration_metrics.json")
+    try:
+        with open(metrics_path, "r") as f:
+            metrics = json.load(f)
+        return {"calibration_metrics": metrics}
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Metrics not computed. Run train.py first.")
 
 
 @app.post("/predict/match")
@@ -91,6 +106,7 @@ async def predict_match(req: MatchRequest):
         penalty_a_override=req.penalty_a_override, penalty_b_override=req.penalty_b_override,
         big_match_a_override=req.big_match_a_override, big_match_b_override=req.big_match_b_override,
         knockout_a_override=req.knockout_a_override, knockout_b_override=req.knockout_b_override,
+        use_goldman=req.use_goldman, use_klement=req.use_klement,
     )
     p_a, p_draw, p_b = goals_to_probs(goals_a, goals_b, stage)
     max_prob = max(p_a, p_b)
@@ -98,12 +114,14 @@ async def predict_match(req: MatchRequest):
     elo_a = req.elo_a_override if req.elo_a_override is not None else _get_elo(team_a)
     elo_b = req.elo_b_override if req.elo_b_override is not None else _get_elo(team_b)
 
+    benchmarks = compute_benchmark_probs(team_a, team_b, stage)
     return {
         "team_a": team_a, "team_b": team_b,
         "team_a_win_prob": round(p_a, 4), "draw_prob": round(p_draw, 4), "team_b_win_prob": round(p_b, 4),
         "predicted_winner": winner,
         "confidence": _confidence_label(max_prob), "confidence_score": round(max_prob, 4),
         "goals_a": round(goals_a, 2), "goals_b": round(goals_b, 2),
+        "benchmarks": benchmarks,
         "model_features": {
             "elo_diff": round(elo_a - elo_b),
             "team_a_form": round(req.form_a_override if req.form_a_override is not None else _get_form(team_a), 2),
@@ -156,6 +174,9 @@ async def predict_bracket_full(
     boost_amount: float = 0.0,
     sim_runs: int = 1,
     scope: str = "all",
+    use_goldman: bool = True,
+    use_klement: bool = True,
+    seed: int | None = None,
 ):
     return await simulate_full_bracket(
         chaos_factor=chaos_factor,
@@ -163,6 +184,9 @@ async def predict_bracket_full(
         boost_amount=boost_amount,
         sim_runs=sim_runs,
         scope=scope,
+        use_goldman=use_goldman,
+        use_klement=use_klement,
+        seed=seed,
     )
 
 
@@ -173,6 +197,9 @@ async def predict_bracket_stream(
     boost_amount: float = 0.0,
     sim_runs: int = 1,
     scope: str = "all",
+    use_goldman: bool = True,
+    use_klement: bool = True,
+    seed: int | None = None,
 ):
     """Server-Sent Events endpoint that streams real per-run simulation progress.
     Yields: data: {"type":"progress","current":N,"total":M}
@@ -185,6 +212,9 @@ async def predict_bracket_stream(
             boost_amount=boost_amount,
             sim_runs=sim_runs,
             scope=scope,
+            use_goldman=use_goldman,
+            use_klement=use_klement,
+            seed=seed,
         ):
             yield f"data: {json.dumps(event)}\n\n"
 
@@ -196,3 +226,9 @@ async def predict_bracket_stream(
             "X-Accel-Buffering": "no",
         },
     )
+
+
+@app.get("/model/feature-importance")
+async def model_feature_importance(top_n: int = 20):
+    """Return the top model features ranked by average importance across home/away XGBoost models."""
+    return get_feature_importance(top_n)

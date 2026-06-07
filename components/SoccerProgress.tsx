@@ -180,11 +180,6 @@ export const SoccerProgress: React.FC<SoccerProgressProps> = ({ current, total, 
           <SoccerGoalSvg isDark={isDark} />
         </div>
       </div>
-
-      {/* % label */}
-      <div className={`text-right text-[10px] font-mono font-bold tracking-wider ${isDark ? "text-emerald-500" : "text-emerald-600"}`}>
-        {pct}%
-      </div>
     </div>
   );
 };

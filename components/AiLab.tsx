@@ -20,6 +20,7 @@ export const AiLab: React.FC = () => {
     penaltyA, setPenaltyA, penaltyB, setPenaltyB,
     bigMatchA, setBigMatchA, bigMatchB, setBigMatchB,
     knockoutA, setKnockoutA, knockoutB, setKnockoutB,
+    useGoldman, setUseGoldman, useKlement, setUseKlement,
     isAutoFilling, autoFillError, autoFillFromApi,
   } = useMatchSimulator();
 
@@ -36,9 +37,45 @@ export const AiLab: React.FC = () => {
               </svg>
               Match Simulator &amp; Feature Inspector
             </h2>
-            <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">
+            <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
               Compare statistics and query Random Forest ML models to estimate match outcomes.
             </p>
+
+            {/* Model Subsystems Activations */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6 p-4 bg-neutral-50 dark:bg-neutral-950/40 border border-neutral-100 dark:border-neutral-800/60 rounded-none">
+              <div className="flex items-start gap-3 text-xs text-neutral-500 dark:text-neutral-400">
+                <span className="font-bold uppercase tracking-wide text-neutral-600 dark:text-neutral-300">Model Features</span>
+                <span className="inline-block max-w-sm leading-snug">
+                  Enable or disable post-prediction calibrators used during match and bracket simulations.
+                </span>
+              </div>
+              <div className="grid grid-cols-1 gap-2">
+                <label className="flex items-center gap-3 p-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-none cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={useGoldman}
+                    onChange={(e) => setUseGoldman(e.target.checked)}
+                    className="w-4 h-4 accent-emerald-500 rounded cursor-pointer"
+                  />
+                  <div>
+                    <span className="block text-neutral-800 dark:text-neutral-200 font-semibold">Goldman Sachs (Elite Scorers)</span>
+                    <span className="block text-[11px] text-neutral-500 dark:text-neutral-400">Adjust outcomes by top-scorer talent in Europe’s elite leagues.</span>
+                  </div>
+                </label>
+                <label className="flex items-center gap-3 p-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-none cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={useKlement}
+                    onChange={(e) => setUseKlement(e.target.checked)}
+                    className="w-4 h-4 accent-emerald-500 rounded cursor-pointer"
+                  />
+                  <div>
+                    <span className="block text-neutral-800 dark:text-neutral-200 font-semibold">Klement Macro (GDP &amp; Culture)</span>
+                    <span className="block text-[11px] text-neutral-500 dark:text-neutral-400">Use macroeconomic and cultural calibration for relative team strength.</span>
+                  </div>
+                </label>
+              </div>
+            </div>
 
             {/* Team + Stage selectors */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end mb-6">
@@ -87,6 +124,8 @@ export const AiLab: React.FC = () => {
               penaltyA={penaltyA} setPenaltyA={setPenaltyA} penaltyB={penaltyB} setPenaltyB={setPenaltyB}
               bigMatchA={bigMatchA} setBigMatchA={setBigMatchA} bigMatchB={bigMatchB} setBigMatchB={setBigMatchB}
               knockoutA={knockoutA} setKnockoutA={setKnockoutA} knockoutB={knockoutB} setKnockoutB={setKnockoutB}
+              useGoldman={useGoldman} setUseGoldman={setUseGoldman}
+              useKlement={useKlement} setUseKlement={setUseKlement}
               isAutoFilling={isAutoFilling}
               autoFillError={autoFillError}
               onAutoFill={autoFillFromApi}

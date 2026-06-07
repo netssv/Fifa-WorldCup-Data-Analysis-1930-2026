@@ -24,6 +24,8 @@ export const useMatchSimulator = () => {
   const [bigMatchB, setBigMatchB] = useState<number>(0.5);
   const [knockoutA, setKnockoutA] = useState<number>(0.5);
   const [knockoutB, setKnockoutB] = useState<number>(0.5);
+  const [useGoldman, setUseGoldman] = useState<boolean>(true);
+  const [useKlement, setUseKlement] = useState<boolean>(true);
   const [isAutoFilling, setIsAutoFilling] = useState<boolean>(false);
   const [autoFillError, setAutoFillError] = useState<string>("");
 
@@ -79,15 +81,19 @@ export const useMatchSimulator = () => {
     setSimulationError("");
     setIsSimulating(true);
     try {
-      const overrides: MatchOverrides = customEnabled
-        ? {
-            elo_a_override: eloA, elo_b_override: eloB,
-            form_a_override: formA, form_b_override: formB,
-            penalty_a_override: penaltyA, penalty_b_override: penaltyB,
-            big_match_a_override: bigMatchA, big_match_b_override: bigMatchB,
-            knockout_a_override: knockoutA, knockout_b_override: knockoutB,
-          }
-        : {};
+      const overrides: MatchOverrides = {
+        use_goldman: useGoldman,
+        use_klement: useKlement,
+        ...(customEnabled
+          ? {
+              elo_a_override: eloA, elo_b_override: eloB,
+              form_a_override: formA, form_b_override: formB,
+              penalty_a_override: penaltyA, penalty_b_override: penaltyB,
+              big_match_a_override: bigMatchA, big_match_b_override: bigMatchB,
+              knockout_a_override: knockoutA, knockout_b_override: knockoutB,
+            }
+          : {})
+      };
       const prediction = await predictMatch(teamA, teamB, stage, overrides);
       setSimulationResult(prediction);
     } catch (err) {
@@ -109,6 +115,7 @@ export const useMatchSimulator = () => {
     penaltyA, setPenaltyA, penaltyB, setPenaltyB,
     bigMatchA, setBigMatchA, bigMatchB, setBigMatchB,
     knockoutA, setKnockoutA, knockoutB, setKnockoutB,
+    useGoldman, setUseGoldman, useKlement, setUseKlement,
     isAutoFilling, autoFillError, autoFillFromApi,
   };
 };

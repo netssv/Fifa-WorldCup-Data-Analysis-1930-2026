@@ -19,7 +19,7 @@ export const TechnicalPanel: React.FC = () => (
       {/* Active Model Stack */}
       <div className="bg-white dark:bg-neutral-950 border border-neutral-200/60 dark:border-neutral-800 rounded-none p-4.5 space-y-3">
         <span className="text-xs font-bold uppercase tracking-wider text-green-600 dark:text-green-400">
-          Active Model Stack (V5)
+          Active Model Stack (V6)
         </span>
         <div className="space-y-2 text-sm text-neutral-650 dark:text-neutral-350">
           <p>
@@ -39,19 +39,16 @@ export const TechnicalPanel: React.FC = () => (
       </div>
 
       {/* Datasets Used */}
-      <div className="bg-white dark:bg-neutral-950 border border-neutral-200/60 dark:border-neutral-800 rounded-none p-4.5 space-y-3">
+      <div className="bg-white dark:bg-neutral-950 border border-neutral-205/60 dark:border-neutral-800 rounded-none p-4.5 space-y-3">
         <span className="text-xs font-bold uppercase tracking-wider text-green-600 dark:text-green-400">
           Training & Feature Datasets
         </span>
         <div className="space-y-2 text-sm text-neutral-650 dark:text-neutral-350">
           <p>
-            <strong>Matches:</strong>{" "}
-            <code className="bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded text-xs">
-              clean_fifa_worldcup_matches.csv
-            </code>
+            <strong>Macroeconomic Factors:</strong> World Bank GDP per capita (PPP) and population statistics.
           </p>
           <p>
-            <strong>FIFA ELO / Form / H2H:</strong> Baseline team capabilities and head-to-head match histories.
+            <strong>Elite Attackers Talent:</strong> Goldman Sachs methodology tracking top-50 European league goalscorers.
           </p>
           <p>
             <strong>Sim parameters:</strong> Fully dynamic parameter overrides enabled for custom simulations.
@@ -116,6 +113,18 @@ export const TechnicalPanel: React.FC = () => (
           desc="Penalty shootout win rate, records vs top-20."
           url="https://www.fifa.com"
           details="Historic penalty shootout efficiency and head-to-head records against top 20 Elo oppositions, adjusting knockout match predictions."
+        />
+        <RoadmapCard
+          title="9. Macroeconomics (GDP)"
+          desc="GDP per capita (PPP) & population weight."
+          url="https://data.worldbank.org"
+          details="World Bank GDP per capita (PPP) and population size metrics, weighted by country-specific football cultural importance indices to reflect national development support."
+        />
+        <RoadmapCard
+          title="10. Elite Attackers"
+          desc="Top-50 league scorers count (capped at 4)."
+          url="https://fbref.com"
+          details="Count of players per national team appearing in the top 50 scorers across Europe's top 5 leagues (PL, LaLiga, Bundesliga, Serie A, Ligue 1), modeling peak offensive talent (Goldman Sachs methodology)."
         />
       </div>
     </div>

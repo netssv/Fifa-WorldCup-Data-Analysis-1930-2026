@@ -20,8 +20,8 @@ This repository features a trained Python ML model stack coupled with a premium,
 * **UX Simplicity:** Custom buttons open settings instantly, and a single "Reset to Defaults" option restores clean data-driven models.
 
 ### 3️⃣ Feature Pipeline & Verification Inspector
-* **ML Blend (V5):** Integrates 35% Random Forest predicted goals with a 65% ELO & Form expected goals formula, resolved via Poisson grid mass simulation.
-* **Integrated Advanced Datasets:** Click-to-toggle information tooltips featuring direct reference links (e.g., Transfermarkt, EA Sports FC, FBref, FIFPRO) to inspect the 8 underlying feature pipelines:
+* **ML Blend (V6):** Integrates 35% Random Forest predicted goals with a 65% ELO & Form expected goals formula, resolved via Poisson grid mass simulation.
+* **Integrated Advanced Datasets:** Click-to-toggle information tooltips featuring direct reference links (e.g., Transfermarkt, EA Sports FC, FBref, FIFPRO) to inspect the 10 underlying feature pipelines:
   1. **Squad Value** (depth of talent valuations)
   2. **EA FC Ratings** (aggregated player card ratings)
   3. **Venue Altitude** (wear factors of stadium elevations)
@@ -30,6 +30,8 @@ This repository features a trained Python ML model stack coupled with a premium,
   6. **Coach Experience** (manager tenure and championship indexes)
   7. **Fatigue & Match Load** (cumulative season workloads)
   8. **Pressure & Shootouts** (historic penalty win rates and top-20 records)
+  9. **Macroeconomics & Social Factors** (World Bank GDP per capita PPP + population weighted by football cultural index)
+  10. **Elite Attackers Talent** (Goldman Sachs methodology: counting players per national squad in top-50 European goalscorer rankings, capped at 4)
 
 ### 4️⃣ Premium UX & Animations
 * **Unified Floating Trophy:** Floating gold trophy header animated in tandem with centered orbiting particles and a soft diffused halo glow.
@@ -47,5 +49,12 @@ This repository features a trained Python ML model stack coupled with a premium,
 ### Machine Learning & Data Pipeline (Python API)
 * **Core:** Python / Pandas / NumPy
 * **Scraping:** BeautifulSoup (Wikipedia historical match data 1930-2022)
-* **Modeling:** Scikit-learn (RandomForestRegressor for goal prediction)
-* **Simulation:** Statistical probability modeling & Poisson distribution solvers
+* **Modeling:** XGBoost Poisson regression for goal prediction
+* **Simulation:** Statistical probability modeling, Poisson match simulation, and penalty shootout resolution
+* **Evaluation:** Holdout calibration metrics, Elo & market odds benchmark comparison, and feature importance explainability
+
+### API Enhancements
+* **Match explainability:** `POST /predict/match` now returns benchmark probability baselines and model confidence.
+* **Feature importance:** `GET /model/feature-importance` exposes the top ranked XGBoost features for home and away goal models.
+* **Seeded brackets:** `GET /predict/bracket/full` and `/predict/bracket/stream` now accept an optional `seed` parameter for reproducible simulations.
+* **Evaluation:** Holdout calibration metrics, Elo/odds baseline comparison, and probability reliability checks

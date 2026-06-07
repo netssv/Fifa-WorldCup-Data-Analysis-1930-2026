@@ -68,6 +68,8 @@ export interface MatchOverrides {
   big_match_b_override?: number;
   knockout_a_override?: number;
   knockout_b_override?: number;
+  use_goldman?: boolean;
+  use_klement?: boolean;
 }
 
 export interface TeamPathPrediction {
