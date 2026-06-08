@@ -70,10 +70,6 @@ export const FifaBracket: React.FC = () => {
         setBoostAmount={setBoostAmount}
         simRuns={simRuns}
         setSimRuns={setSimRuns}
-        useGoldman={useGoldman}
-        setUseGoldman={setUseGoldman}
-        useKlement={useKlement}
-        setUseKlement={setUseKlement}
         isDark={isDark}
         onToggleTheme={handleToggleTheme}
         simProgress={simProgress}
@@ -136,21 +132,27 @@ export const FifaBracket: React.FC = () => {
           </div>
         )}
 
-        {activeTab === "r32" && (
-          <RoundColumn round="r32" roundTitle="Round of 32" previousRoundTeams={getAvailableTeams(state, "r32")} selectedTeams={state.r32} onToggleTeam={(team) => handlePlayoffSelect("r32", team)} winProbs={winProbs} teamStats={teamStats} />
-        )}
-        {activeTab === "r16" && (
-          <RoundColumn round="r16" roundTitle="Round of 16" previousRoundTeams={getAvailableTeams(state, "r16")} selectedTeams={state.r16} onToggleTeam={(team) => handlePlayoffSelect("r16", team)} winProbs={winProbs} teamStats={teamStats} />
-        )}
-        {activeTab === "r8" && (
-          <RoundColumn round="r8" roundTitle="Quarterfinals" previousRoundTeams={getAvailableTeams(state, "r8")} selectedTeams={state.r8} onToggleTeam={(team) => handlePlayoffSelect("r8", team)} winProbs={winProbs} teamStats={teamStats} />
-        )}
-        {activeTab === "semi" && (
-          <RoundColumn round="semi" roundTitle="Semifinals" previousRoundTeams={getAvailableTeams(state, "semi")} selectedTeams={state.semi} onToggleTeam={(team) => handlePlayoffSelect("semi", team)} winProbs={winProbs} teamStats={teamStats} />
-        )}
-        {activeTab === "final" && (
-          <RoundColumn round="final" roundTitle="Grand Final" previousRoundTeams={getAvailableTeams(state, "final")} selectedTeams={state.final} onToggleTeam={(team) => handlePlayoffSelect("final", team)} winProbs={winProbs} teamStats={teamStats} />
-        )}
+        {(["r32", "r16", "r8", "semi", "final"] as const).map((r) => {
+          const titles: Record<string, string> = {
+            r32: "Round of 32",
+            r16: "Round of 16",
+            r8: "Quarterfinals",
+            semi: "Semifinals",
+            final: "Grand Final"
+          };
+          return activeTab === r && (
+            <RoundColumn
+              key={r}
+              round={r}
+              roundTitle={titles[r]}
+              previousRoundTeams={getAvailableTeams(state, r)}
+              selectedTeams={state[r]}
+              onToggleTeam={(team) => handlePlayoffSelect(r, team)}
+              winProbs={winProbs}
+              teamStats={teamStats}
+            />
+          );
+        })}
 
         {activeTab === "summary" && (
           <div className="space-y-6">
@@ -166,12 +168,7 @@ export const FifaBracket: React.FC = () => {
         )}
 
         {activeTab === "ai_lab" && (
-          <AiLab
-            useGoldman={useGoldman}
-            setUseGoldman={setUseGoldman}
-            useKlement={useKlement}
-            setUseKlement={setUseKlement}
-          />
+          <AiLab />
         )}
       </main>
 
