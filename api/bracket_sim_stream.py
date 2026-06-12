@@ -137,17 +137,8 @@ async def simulate_bracket_stream(
         probs = {t: round(c / effective_runs, 4) for t, c in round_counts.items()}
 
     # ── Pick representative run ────────────────────────────────────────
-    if scope == "all":
-        top_winner = max(probs.items(), key=lambda x: x[1])[0] if probs else all_results[0]["final"]
-        rep_run = next((r for r in all_results if r["final"] == top_winner), all_results[0])
-    elif scope == "groups":
-        rep_run = all_results[0]
-    else:
-        if probs:
-            top_team = max(probs.items(), key=lambda x: x[1])[0]
-            rep_run = next((r for r in all_results if top_team in r[scope]), all_results[0])
-        else:
-            rep_run = all_results[0]
+    from .bracket_sim import find_most_representative_run
+    rep_run = find_most_representative_run(all_results, scope)
 
     # ── Team stats from the simulator ─────────────────────────────────
     team_stats: dict[str, dict] = {}

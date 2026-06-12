@@ -46,7 +46,7 @@ class TournamentSimulator:
     def _apply_chaos(self, goals: float) -> float:
         if self.chaos_factor <= 0.0:
             return goals
-        perturb = (self.rng.random() - 0.5) * self.chaos_factor * 0.20
+        perturb = (self.rng.random() - 0.5) * self.chaos_factor
         return max(0.05, goals * (1.0 + perturb))
 
     def _sample_match_goals(self, goals_a: float, goals_b: float) -> tuple[int, int]:

@@ -22,6 +22,53 @@ ROUND_ORDER = ["groups", "r32", "r16", "r8", "semi", "final"]
 SimScope = Literal["all", "groups", "r32", "r16", "r8", "semi", "final"]
 
 
+def find_most_representative_run(all_results: list[dict], scope: str) -> dict:
+    if not all_results:
+        return {}
+
+    group_freq: dict[str, dict[str, int]] = {}
+    playoff_stages = ["r32", "r16", "r8", "semi", "final"]
+    playoff_freq: dict[str, dict[str, int]] = {s: {} for s in playoff_stages}
+
+    for r in all_results:
+        for g_name, qualifiers in r.get("groups", {}).items():
+            if g_name not in group_freq:
+                group_freq[g_name] = {}
+            for t in qualifiers:
+                group_freq[g_name][t] = group_freq[g_name].get(t, 0) + 1
+        for s in playoff_stages:
+            val = r.get(s)
+            if isinstance(val, list):
+                for t in val:
+                    if t:
+                        playoff_freq[s][t] = playoff_freq[s].get(t, 0) + 1
+            elif val:
+                playoff_freq[s][val] = playoff_freq[s].get(val, 0) + 1
+
+    best_run = all_results[0]
+    best_score = -1.0
+
+    for r in all_results:
+        score = 0.0
+        for g_name, qualifiers in r.get("groups", {}).items():
+            for t in qualifiers:
+                score += group_freq.get(g_name, {}).get(t, 0)
+        for s in playoff_stages:
+            val = r.get(s)
+            if isinstance(val, list):
+                for t in val:
+                    if t:
+                        score += playoff_freq[s].get(t, 0)
+            elif val:
+                score += playoff_freq[s].get(val, 0)
+
+        if score > best_score:
+            best_score = score
+            best_run = r
+
+    return best_run
+
+
 async def simulate_full_bracket(
     chaos_factor: float = 0.0,
     boost_team: str | None = None,
@@ -88,17 +135,7 @@ async def simulate_full_bracket(
                     round_counts[teams_in_round] = round_counts.get(teams_in_round, 0) + 1
         probs = {t: round(count / effective_runs, 4) for t, count in round_counts.items()}
 
-    if scope == "all":
-        top_winner = max(probs.items(), key=lambda x: x[1])[0] if probs else all_results[0]["final"]
-        rep_run = next((r for r in all_results if r["final"] == top_winner), all_results[0])
-    elif scope == "groups":
-        rep_run = all_results[0]
-    else:
-        if probs:
-            top_team = max(probs.items(), key=lambda x: x[1])[0]
-            rep_run = next((r for r in all_results if top_team in r[scope]), all_results[0])
-        else:
-            rep_run = all_results[0]
+    rep_run = find_most_representative_run(all_results, scope)
 
     team_stats = {}
     for team, stats in sim.goals_tracker.items():

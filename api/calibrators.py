@@ -70,9 +70,9 @@ def _apply_macro_calibration(
     cult_a = FOOTBALL_CULTURAL_IMPORTANCE.get(team_a, 0.75)
     cult_b = FOOTBALL_CULTURAL_IMPORTANCE.get(team_b, 0.75)
 
-    macro_score_a = (0.7 * gdp_a + 0.3 * pop_a) * cult_a
-    macro_score_b = (0.7 * gdp_b + 0.3 * pop_b) * cult_b
-    macro_boost = math.tanh((macro_score_a - macro_score_b) * 0.8) * 0.03
+    macro_score_a = (0.9 * gdp_a + 0.1 * pop_a) * cult_a #PBI is % of GDP per capita plus % of population, weighted by football culture index
+    macro_score_b = (0.9 * gdp_b + 0.1 * pop_b) * cult_b
+    macro_boost = math.tanh((macro_score_a - macro_score_b) * 0.8) * 0.15 #this is the booster of the money!
     return goals_a * (1 + macro_boost), goals_b * (1 - macro_boost)
 
 
